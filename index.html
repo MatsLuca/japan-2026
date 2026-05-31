@@ -272,6 +272,59 @@ h2.sec{font-family:var(--serif);font-weight:800;font-size:clamp(28px,4.4vw,46px)
 .fcard .fi{font-size:13px;color:var(--soft);padding:7px 0;border-top:1px solid var(--line)}
 .fcard .fi span{display:inline-block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-right:8px}
 
+/* Crew-Awards */
+.awards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.award{border:1px solid var(--line);border-radius:16px;padding:18px 16px;background:var(--surf);text-align:center;transition:.25s}
+.award:hover{transform:translateY(-3px);border-color:var(--line-strong)}
+.award .aem{font-size:30px;line-height:1}
+.award .ati{font-family:var(--serif);font-weight:700;font-size:14.5px;margin:9px 0 11px;color:var(--gold)}
+.award .awin{display:inline-flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:700;font-size:17px}
+.award .awin i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:#15171f}
+.award .aval{font-size:12px;color:var(--dim);margin-top:5px}
+
+/* Top-Bucketlist */
+.blrow{display:grid;grid-template-columns:30px 1fr 110px auto 56px;gap:12px;align-items:center;
+  padding:9px 0;border-top:1px solid rgba(246,241,230,.06)}
+.blrow:first-child{border-top:0}
+.blr{font-family:var(--serif);font-weight:800;font-size:17px;color:var(--vermilion);text-align:center}
+.bll{font-size:14.5px}
+.blbar{height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+.blbar i{display:block;height:100%;background:linear-gradient(90deg,var(--vermilion),var(--gold));border-radius:4px}
+.blfire{font-size:11px;white-space:nowrap;letter-spacing:-2px}
+.blsum{font-size:12px;color:var(--soft);text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:600px){.blrow{grid-template-columns:24px 1fr auto;gap:9px}.blbar,.blsum{display:none}}
+
+/* Kompatibilität */
+.ctiles{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+@media(max-width:560px){.ctiles{grid-template-columns:1fr}}
+.ctile{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--surf)}
+.ctile.dream{border-color:rgba(231,181,82,.4);background:rgba(231,181,82,.06)}
+.ctile.oppo{border-color:rgba(240,70,52,.35);background:rgba(240,70,52,.05)}
+.ctile .clab{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:12px}
+.ctile .cpair{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ctile .cp{display:inline-flex;align-items:center;gap:7px;font-family:var(--serif);font-weight:700;font-size:15px}
+.ctile .cp i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;color:#15171f}
+.ctile .camp{color:var(--vermilion);font-size:18px}
+.ctile .cpct{font-family:var(--serif);font-weight:800;font-size:26px;margin-top:10px}
+.ctile .cpct small{font-family:var(--sans);font-weight:400;font-size:12px;color:var(--dim);margin-left:6px}
+.cmatrix{display:grid;gap:5px;align-items:center;min-width:420px}
+.cmatrix .ch{font-family:var(--serif);font-weight:800;font-size:12px;text-align:center}
+.cmatrix .cc{aspect-ratio:1;display:grid;place-items:center;border-radius:7px;font-size:11px;font-weight:600;
+  color:#fff;font-variant-numeric:tabular-nums;background:var(--line)}
+.cmatrix .cc.self{background:transparent;color:var(--dim)}
+.compatwrap{overflow-x:auto}
+
+/* Einig & uneinig */
+.consensus2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.consensus2{grid-template-columns:1fr}}
+.cscol{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--surf)}
+.cscol.ok{border-color:rgba(231,181,82,.35)}
+.cscol.war{border-color:rgba(240,70,52,.3)}
+.csh{font-family:var(--serif);font-weight:700;font-size:15px;margin-bottom:13px}
+.chip.on{border-color:rgba(231,181,82,.5);color:var(--gold);background:rgba(231,181,82,.07)}
+.chip.war{border-color:rgba(240,70,52,.45);color:#f0876b;background:rgba(240,70,52,.06)}
+.cscol .none{color:var(--dim)}
+
 /* ---------- TAGESPLAN (Finale-Timeline · mobile-first) ---------- */
 .finale{background:linear-gradient(180deg,transparent,rgba(0,0,0,.18))}
 #timeline{max-width:760px;margin:0 auto}
@@ -414,6 +467,18 @@ footer .seal{font-family:var(--serif);color:var(--vermilion);font-size:26px;disp
   <h2 class="sec">Was die Crew will</h2>
   <p class="sec-lead" id="survLead"></p>
   <div class="legend" id="survPeople"></div>
+
+  <h3 class="subhead">Crew-Awards<span>表彰 · wer ist wofür Champion</span></h3>
+  <div class="awards" id="awards"></div>
+
+  <h3 class="subhead">Top-Bucketlist<span>ランキング · was die Crew am meisten will</span></h3>
+  <div id="bucketlist"></div>
+
+  <h3 class="subhead">Wer passt zusammen?<span>相性 · Reise-Kompatibilität</span></h3>
+  <div class="compatwrap" id="compat"></div>
+
+  <h3 class="subhead">Einig &amp; uneinig<span>合意 vs. 論争</span></h3>
+  <div class="consensus2" id="consensus2"></div>
 
   <h3 class="subhead">Stimmungs-Profil<span>気分 · 0–10</span></h3>
   <div class="scrollx"><div id="moodBlock"></div></div>
@@ -708,6 +773,82 @@ document.getElementById('survLead').textContent = C.survey.lead;
 /* Personen-Legende */
 document.getElementById('survPeople').innerHTML = PEOPLE.map((p,i)=>
   `<span class="lg"><i style="background:${PCOL[i]}">${esc(pInit(p.name))}</i>${esc(p.name)}</span>`).join('');
+
+/* ===== Analytics-Schicht (alles aus den Daten berechnet) ===== */
+const ALLW = GROUPS.flatMap(g=>g.items);
+const pidx = p=>PEOPLE.indexOf(p);
+
+/* A — Crew-Awards */
+(function(){
+  const T={kultur:['⛩️','Kulturbeauftragte:r'],action:['⚡','Adrenalin-Junkie'],night:['🍻','Party-Animal'],
+           food:['🍜','Foodie des Jahres'],chill:['♨️','Zen-Meister:in'],nerd:['🎮','Chief Nerd']};
+  const aw=VIBES.map(v=>{
+    let best=null; PEOPLE.forEach((p,i)=>{const sc=(p.s||{})[v.k]; if(sc!=null&&(best===null||sc>best.sc))best={n:p.name,sc,i};});
+    const t=T[v.k]||['',v.l];
+    return {em:t[0],ti:t[1],n:best?best.n:'–',v:best?best.sc+'/10':'',i:best?best.i:0};
+  });
+  const cnt=(p,f)=>Object.values(p.w||{}).filter(f).length;
+  const ent=PEOPLE.map((p,i)=>({n:p.name,c:cnt(p,x=>x===3),i})).sort((a,b)=>b.c-a.c)[0];
+  const eg =PEOPLE.map((p,i)=>({n:p.name,c:cnt(p,x=>x<=1),i})).sort((a,b)=>b.c-a.c)[0];
+  aw.push({em:'🔥',ti:'Größter Enthusiast',n:ent.n,v:ent.c+'× UNBEDINGT',i:ent.i});
+  aw.push({em:'😎',ti:'Mr. Easy-going',n:eg.n,v:eg.c+'× „egal/nice"',i:eg.i});
+  document.getElementById('awards').innerHTML = aw.map(a=>`
+    <div class="award"><div class="aem">${a.em}</div>
+      <div class="ati">${esc(a.ti)}</div>
+      <div class="awin"><i style="background:${PCOL[a.i]}">${esc(pInit(a.n))}</i>${esc(a.n)}</div>
+      <div class="aval">${esc(a.v)}</div></div>`).join('');
+})();
+
+/* B — Top-Bucketlist (Gesamt-Ranking aller Wünsche) */
+(function(){
+  const maxT=PEOPLE.length*3;
+  const r=ALLW.map(it=>{let tot=0,fire=0;PEOPLE.forEach(p=>{const v=(p.w||{})[it.k]||0;tot+=v;if(v===3)fire++;});return {l:it.l,tot,fire};})
+    .sort((a,b)=>b.tot-a.tot).slice(0,12);
+  document.getElementById('bucketlist').innerHTML = r.map((x,i)=>`
+    <div class="blrow"><span class="blr">${i+1}</span><span class="bll">${esc(x.l)}</span>
+      <span class="blbar"><i style="width:${Math.round(x.tot/maxT*100)}%"></i></span>
+      <span class="blfire">${x.fire?('🔥'.repeat(Math.min(x.fire,6))):''}</span>
+      <span class="blsum">${x.tot}/${maxT}</span></div>`).join('');
+})();
+
+/* C — Kompatibilität (Matrix + Dream-Team / Gegenpole) */
+(function(){
+  function sim(a,b){
+    let ms=0,mc=0; VIBES.forEach(v=>{const x=(a.s||{})[v.k],y=(b.s||{})[v.k]; if(x!=null&&y!=null){ms+=1-Math.abs(x-y)/10;mc++;}});
+    let ws=0,wc=0; ALLW.forEach(it=>{const x=(a.w||{})[it.k],y=(b.w||{})[it.k]; if(x!=null&&y!=null){ws+=1-Math.abs(x-y)/3;wc++;}});
+    return Math.round(((mc?ms/mc:0)*0.45+(wc?ws/wc:0)*0.55)*100);
+  }
+  let best={s:-1},worst={s:101};
+  const n=PEOPLE.length;
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const s=sim(PEOPLE[i],PEOPLE[j]);
+    if(s>best.s)best={s,i,j}; if(s<worst.s)worst={s,i,j};}
+  const tile=(o,cls,lab,sub)=>`<div class="ctile ${cls}"><div class="clab">${lab}</div>
+    <div class="cpair"><span class="cp"><i style="background:${PCOL[o.i]}">${esc(pInit(PEOPLE[o.i].name))}</i>${esc(PEOPLE[o.i].name)}</span>
+    <span class="camp">${cls==='dream'?'♥':'⚡'}</span>
+    <span class="cp"><i style="background:${PCOL[o.j]}">${esc(pInit(PEOPLE[o.j].name))}</i>${esc(PEOPLE[o.j].name)}</span></div>
+    <div class="cpct">${o.s}% <small>${sub}</small></div></div>`;
+  let mat=`<div class="cmatrix" style="grid-template-columns:30px repeat(${n},1fr)"><div class="ch"></div>`+
+    PEOPLE.map((p,i)=>`<div class="ch" style="color:${PCOL[i]}">${esc(pInit(p.name))}</div>`).join('');
+  PEOPLE.forEach((p,i)=>{mat+=`<div class="ch" style="color:${PCOL[i]}">${esc(pInit(p.name))}</div>`;
+    PEOPLE.forEach((q,j)=>{if(i===j){mat+=`<div class="cc self">·</div>`;}
+      else{const s=sim(p,q);mat+=`<div class="cc" style="background:rgba(240,70,52,${(s/100*0.85).toFixed(2)})" title="${esc(p.name)} ↔ ${esc(q.name)}: ${s}%">${s}</div>`;}});});
+  mat+=`</div>`;
+  document.getElementById('compat').innerHTML =
+    `<div class="ctiles">${tile(best,'dream','🏆 Das Dream-Team','perfekt gematcht')}${tile(worst,'oppo','🧲 Gegenpole','ziehen sich an?')}</div>`+mat;
+})();
+
+/* D — Einig & uneinig */
+(function(){
+  const unan=ALLW.filter(it=>PEOPLE.every(p=>((p.w||{})[it.k]||0)>=2));
+  const contr=ALLW.map(it=>{const vs=PEOPLE.map(p=>(p.w||{})[it.k]).filter(x=>x!=null);
+      return {l:it.l,sp:(Math.max(...vs)-Math.min(...vs))};}).filter(x=>x.sp>=3)
+      .sort((a,b)=>b.sp-a.sp).slice(0,8);
+  document.getElementById('consensus2').innerHTML =
+    `<div class="cscol ok"><div class="csh">🤝 Darauf einigt sich die ganze Crew</div>
+      <div class="chips">${unan.length?unan.map(x=>`<span class="chip on">${esc(x.l)}</span>`).join(''):'<span class="none">—</span>'}</div></div>
+     <div class="cscol war"><div class="csh">💥 Worüber gestritten wird</div>
+      <div class="chips">${contr.length?contr.map(x=>`<span class="chip war">${esc(x.l)}</span>`).join(''):'<span class="none">—</span>'}</div></div>`;
+})();
 
 /* Stimmungs-Profil: Matrix Achsen × Personen (0–10) */
 (function(){
