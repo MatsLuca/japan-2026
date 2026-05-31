@@ -103,9 +103,9 @@ h2.sec{font-family:var(--serif);font-weight:800;font-size:clamp(28px,4.4vw,46px)
 /* ---------- ROUTE — interaktive Scroll-Karte ---------- */
 .routewrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px;margin-top:38px;align-items:start}
 .routemap{position:sticky;top:74px;height:calc(100vh - 104px);border-radius:18px;overflow:hidden;
-  border:1px solid var(--line-strong);background:#0f1119;box-shadow:0 18px 50px -24px rgba(0,0,0,.7)}
+  border:1px solid var(--line-strong);background:#e7e2d6;box-shadow:0 18px 50px -24px rgba(0,0,0,.7)}
 #jpmap{width:100%;height:100%}
-.leaflet-container{background:#0f1119;font-family:var(--sans)}
+.leaflet-container{background:#e7e2d6;font-family:var(--sans)}
 .leaflet-control-attribution{background:rgba(15,17,25,.7)!important;color:#7d7a70!important;font-size:9px!important}
 .leaflet-control-attribution a{color:#9a917f!important}
 .pinwrap{background:none!important;border:0!important}
@@ -637,10 +637,10 @@ document.getElementById('crewGrid').innerHTML = C.crew.map(m=>`
     const pts=STOPS.map(s=>[s.lat,s.lng]);
     map=L.map('jpmap',{zoomControl:false,attributionControl:true,dragging:false,scrollWheelZoom:false,
       doubleClickZoom:false,touchZoom:false,boxZoom:false,keyboard:false,tap:false,fadeAnimation:true});
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-      {maxZoom:18,subdomains:'abcd',attribution:'© OpenStreetMap · © CARTO'}).addTo(map);
-    L.polyline(pts,{color:'#f04634',weight:2.5,opacity:.28,dashArray:'2 9'}).addTo(map);
-    doneLine=L.polyline([],{color:'#f04634',weight:4,opacity:.95}).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+      {maxZoom:20,subdomains:'abcd',attribution:'© OpenStreetMap · © CARTO'}).addTo(map);
+    L.polyline(pts,{color:'#d6361f',weight:3,opacity:.4,dashArray:'2 9'}).addTo(map);
+    doneLine=L.polyline([],{color:'#f04634',weight:5,opacity:1}).addTo(map);
     STOPS.forEach(s=>marks.push(
       L.marker([s.lat,s.lng],{icon:L.divIcon({className:'pinwrap',html:`<span class="pin">${s.n}</span>`,
         iconSize:[28,28],iconAnchor:[14,14]})}).addTo(map)));
