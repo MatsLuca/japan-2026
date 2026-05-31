@@ -132,9 +132,20 @@ h2.sec{font-family:var(--serif);font-weight:800;font-size:clamp(28px,4.4vw,46px)
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{font-size:12.5px;color:var(--soft);border:1px solid var(--line);border-radius:100px;padding:5px 12px;background:rgba(246,241,230,.02)}
 @media(max-width:820px){
-  .routewrap{display:block;margin-top:24px}
-  .routemap{position:sticky;top:53px;height:46vh;margin-bottom:8px;z-index:6}
-  .rstep{padding:22px 0}
+  /* Immersiv: Karte vollflächig im Hintergrund (sticky), Texte als Glas-Karten darüber */
+  .routewrap{display:block;position:relative;margin-top:18px}
+  .routemap{position:sticky;top:54px;height:calc(100vh - 62px);height:calc(100svh - 62px);
+    margin:0;z-index:1}
+  .routesteps{position:relative;z-index:2;
+    margin-top:calc(62px - 100vh);margin-top:calc(62px - 100svh)}
+  .rstep{min-height:82vh;min-height:82svh;border-top:0;opacity:1;padding:0 2px 11vh;
+    display:flex;flex-direction:column;justify-content:flex-end}
+  .rcard{background:rgba(12,14,21,.84);backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
+    border:1px solid var(--line-strong);border-radius:16px;padding:15px 17px;
+    opacity:.45;transform:translateY(12px);transition:opacity .45s,transform .45s,border-color .45s}
+  .rstep.act .rcard{opacity:1;transform:none;border-color:rgba(240,70,52,.45);
+    box-shadow:0 16px 40px -18px rgba(0,0,0,.85)}
+  .rname{font-size:19px}
   .rthumb{display:none}
 }
 
@@ -604,14 +615,14 @@ document.getElementById('crewGrid').innerHTML = C.crew.map(m=>`
   const steps=document.getElementById('routeSteps');
   steps.innerHTML = STOPS.map((s,i)=>{
     const img=BGDATA[s.bg];
-    return `<div class="rstep" data-i="${i}">
+    return `<div class="rstep" data-i="${i}"><div class="rcard">
       <div class="rtop"><span class="rn">${s.n}</span>
         <div class="rttl"><div class="rname">${esc(s.name)}<span class="rjp">${esc(s.jp||'')}</span></div>
         <div class="rmeta">${esc(s.phase)} · ${esc(s.date)} · ${esc(s.mode||'')}</div></div></div>
       ${img?`<div class="rthumb"><img loading="lazy" src="${esc(img)}" alt=""></div>`:''}
       <p class="rdesc">${esc(s.note)}</p>
       <div class="chips">${(s.tags||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div>
-    </div>`;
+    </div></div>`;
   }).join('');
 
   let map=null, doneLine=null, marks=[], cur=-1;
@@ -642,7 +653,7 @@ document.getElementById('crewGrid').innerHTML = C.crew.map(m=>`
   const so=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
     document.querySelectorAll('.rstep').forEach(x=>x.classList.remove('act'));
     e.target.classList.add('act'); goTo(+e.target.dataset.i);}}),
-    {rootMargin:'-48% 0px -46% 0px',threshold:0});
+    {rootMargin:'-50% 0px -50% 0px',threshold:0});
   document.querySelectorAll('.rstep').forEach(s=>so.observe(s));
 })();
 
