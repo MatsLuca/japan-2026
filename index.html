@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>日本 2026 — Crew Wiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style id="shell">
+  html,body{margin:0;padding:0}
+  body{background:linear-gradient(165deg,#252939 0%,#1c1f2b 46%,#181a26 100%);
+       font-family:"Zen Kaku Gothic New",sans-serif;color:#f6f1e6}
+  .view{display:none;min-height:100vh;position:relative}
+  .view.active{display:block}
+  /* sanfter Fade NUR für Nicht-Tagesplan-Views (Opacity-Animation würde sonst den
+     fixed Foto-Hintergrund des Tagesplans über Stacking-Context einsperren) */
+  #v-home.active,#v-uebersicht.active,#v-ergebnisse.active{animation:vfade .5s ease}
+  @keyframes vfade{from{opacity:0}to{opacity:1}}
+  /* Top-Nav */
+  .appnav{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;gap:18px;
+          padding:11px clamp(14px,3vw,26px);backdrop-filter:blur(14px);
+          background:linear-gradient(180deg,rgba(20,22,32,.86),rgba(20,22,32,.35));
+          border-bottom:1px solid rgba(246,241,230,.12)}
+  .appnav .brand{font-family:"Shippori Mincho B1",serif;font-weight:800;font-size:19px;
+          color:#f6f1e6;text-decoration:none;letter-spacing:.02em}
+  .appnav .brand b{color:#f04634}
+  .appnav nav{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+  .appnav nav a{font-family:"Shippori Mincho B1",serif;font-size:13.5px;color:#cfc8b8;
+          text-decoration:none;padding:7px 12px;border-radius:7px;transition:.2s;white-space:nowrap}
+  .appnav nav a:hover{color:#f6f1e6;background:rgba(246,241,230,.07)}
+  .appnav nav a.on{color:#f04634}
+  .appnav nav a.ext{color:#e7b552}
+  @media(max-width:760px){.appnav nav a{padding:6px 9px;font-size:12.5px}}
+  /* Content unter Nav (außer fullbleed Tagesplan, der overlayt) */
+  #v-home,#v-uebersicht,#v-ergebnisse{padding-top:58px}
+</style>
+<style id="viewcss">
+/* ===== home ===== */
+#v-home{
+    --ink:#1c1f2b;            /* sumi ink — aufgehellt */
+    --ink2:#23273a;
+    --paper:#f6f1e6;          /* washi cream, heller */
+    --paper-soft:#e3ddcf;     /* gut lesbarer Sekundärtext */
+    --paper-dim:#c5beae;      /* tertiär, kontraststärker als vorher */
+    --vermilion:#f04634;      /* torii / hinomaru red, leuchtender */
+    --vermilion-soft:#ff6a55;
+    --gold:#e7b552;
+    --line:rgba(246,241,230,.18);
+    --serif:"Shippori Mincho B1",serif;
+    --sans:"Zen Kaku Gothic New",sans-serif;
+  }
+#v-home *{box-sizing:border-box;margin:0;padding:0}
+#v-home{scroll-behavior:smooth}
+#v-home{
+    background:
+      linear-gradient(165deg,#252939 0%, var(--ink) 46%, #181a26 100%);
+    color:var(--paper);
+    font-family:var(--sans); font-weight:400; line-height:1.6;
+    min-height:100vh; overflow-x:hidden; position:relative;
+    -webkit-font-smoothing:antialiased;
+  }
+#v-home /* ── rising sun + atmosphere ───────────────────────── */
+  .sun{
+    position:fixed; z-index:0; border-radius:50%;
+    width:min(72vw,760px); aspect-ratio:1;
+    right:-16vw; top:-22vw;
+    background:radial-gradient(circle at 50% 50%,
+      var(--vermilion) 0%, #b5281f 38%, rgba(120,24,18,0) 70%);
+    filter:blur(2px);
+    animation:breathe 9s ease-in-out infinite;
+  }
+#v-home .sun::after{
+    content:""; position:absolute; inset:14%;
+    border-radius:50%; border:1px solid rgba(255,120,100,.25);
+  }
+#v-home .glow{
+    position:fixed; z-index:0; left:-20vw; bottom:-26vw;
+    width:min(80vw,820px); aspect-ratio:1; border-radius:50%;
+    background:radial-gradient(circle,#1b2c52 0%, rgba(12,16,30,0) 68%);
+  }
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.04);opacity:1}}
+#v-home /* grain */
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay}
+#v-home .wrap{position:relative;z-index:2;max-width:1080px;margin:0 auto;
+        padding:clamp(28px,5vw,64px) clamp(22px,5vw,56px) 64px}
+#v-home /* ── vertical kanji rail ───────────────────────────── */
+  .rail{position:fixed;top:0;left:max(14px,2vw);height:100vh;z-index:2;
+        display:flex;flex-direction:column;justify-content:space-between;
+        padding:30px 0;pointer-events:none}
+#v-home .rail span{writing-mode:vertical-rl;font-family:var(--serif);
+        letter-spacing:.3em;font-size:14px;color:var(--paper-soft);opacity:.75}
+#v-home .rail .big{font-size:34px;color:var(--vermilion);opacity:.85;font-weight:700}
+@media(max-width:760px){#v-home .rail{display:none}}
+#v-home /* ── hero ──────────────────────────────────────────── */
+  header{padding-top:clamp(20px,7vh,72px)}
+#v-home .eyebrow{font-family:var(--serif);font-size:14px;letter-spacing:.38em;
+           text-transform:uppercase;color:var(--gold);font-weight:600;
+           display:flex;align-items:center;gap:14px}
+#v-home .eyebrow::before{content:"";width:42px;height:1px;background:var(--gold);opacity:.7}
+#v-home .title{font-family:var(--serif);font-weight:800;line-height:.86;
+         font-size:clamp(72px,18vw,210px);letter-spacing:-.02em;
+         margin:18px 0 0;position:relative;color:var(--paper)}
+#v-home .title .jp{display:block;font-size:clamp(20px,4.4vw,42px);font-weight:600;
+             letter-spacing:.18em;color:var(--vermilion-soft);margin-bottom:6px}
+#v-home .title .yr{color:var(--vermilion)}
+#v-home .meta{display:flex;flex-wrap:wrap;gap:10px 26px;align-items:baseline;
+        margin-top:22px;font-size:clamp(15px,1.7vw,18px);color:var(--paper-soft)}
+#v-home .meta b{color:var(--paper);font-weight:500}
+#v-home .route{font-family:var(--serif);letter-spacing:.04em}
+#v-home /* ── countdown ─────────────────────────────────────── */
+  .count{display:flex;align-items:flex-end;gap:clamp(10px,2.4vw,30px);
+         margin:38px 0 8px;flex-wrap:wrap}
+#v-home .count .lead{font-family:var(--serif);font-size:14px;color:var(--gold);
+        writing-mode:vertical-rl;letter-spacing:.3em;align-self:stretch;padding-top:6px}
+#v-home .cu{display:flex;flex-direction:column}
+#v-home .cu .n{font-family:var(--serif);font-weight:800;font-size:clamp(40px,7vw,76px);
+         line-height:.9;font-variant-numeric:tabular-nums;color:var(--paper)}
+#v-home .cu .l{font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;
+         color:var(--paper-soft);margin-top:8px}
+#v-home .cu.sep .n{color:var(--vermilion)}
+#v-home /* ── crew line ─────────────────────────────────────── */
+  .crew{margin-top:30px;padding-top:22px;border-top:1px solid var(--line);
+        font-size:clamp(14px,1.7vw,18px);line-height:2;color:var(--paper)}
+#v-home .crew .k{font-family:var(--serif);color:var(--gold);font-size:12.5px;
+           letter-spacing:.26em;text-transform:uppercase;display:block;margin-bottom:8px}
+#v-home .crew .nm{font-family:var(--serif);font-weight:600}
+#v-home .crew .dot{color:var(--vermilion);margin:0 .5em}
+#v-home .crew small{color:var(--paper-soft);font-size:.82em;font-family:var(--sans)}
+#v-home /* ── index nav (magazine TOC) ──────────────────────── */
+  nav{margin-top:54px}
+#v-home .nav-h{font-family:var(--serif);font-size:13.5px;letter-spacing:.34em;
+         text-transform:uppercase;color:var(--paper-soft);
+         display:flex;align-items:center;gap:14px;margin-bottom:8px}
+#v-home .nav-h::after{content:"";flex:1;height:1px;background:var(--line)}
+#v-home a.row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+        gap:clamp(14px,3vw,38px);text-decoration:none;color:var(--paper);
+        padding:clamp(20px,3vw,30px) 6px;border-bottom:1px solid var(--line);
+        position:relative;overflow:hidden;isolation:isolate}
+#v-home a.row::before{content:"";position:absolute;inset:0;z-index:-1;
+        background:linear-gradient(90deg,rgba(226,59,46,.16),rgba(226,59,46,0));
+        transform:translateX(-101%);transition:transform .5s cubic-bezier(.16,1,.3,1)}
+#v-home a.row:hover::before{transform:translateX(0)}
+#v-home a.row .idx{font-family:var(--serif);font-weight:700;font-size:clamp(20px,3vw,30px);
+        color:var(--vermilion);min-width:2.2ch;font-variant-numeric:tabular-nums}
+#v-home a.row .mid{min-width:0}
+#v-home a.row .ttl{font-family:var(--serif);font-weight:700;font-size:clamp(22px,3.6vw,38px);
+        line-height:1.05;display:flex;align-items:baseline;gap:.5em;flex-wrap:wrap}
+#v-home a.row .ttl .kanji{font-size:.5em;color:var(--paper-dim);font-weight:500;letter-spacing:.12em}
+#v-home a.row .desc{color:var(--paper-soft);font-size:clamp(14.5px,1.5vw,16px);margin-top:7px;max-width:54ch;line-height:1.55}
+#v-home a.row .badge{display:inline-block;margin-top:12px;font-size:12px;letter-spacing:.06em;
+        color:var(--gold);border:1px solid rgba(231,181,82,.5);border-radius:2px;padding:3px 10px}
+#v-home a.row .arr{font-family:var(--serif);font-size:clamp(24px,4vw,40px);color:var(--paper-dim);
+        transition:transform .35s cubic-bezier(.16,1,.3,1),color .35s}
+#v-home a.row:hover .arr{transform:translateX(10px);color:var(--vermilion)}
+#v-home a.row:hover .ttl{color:var(--paper)}
+#v-home footer{margin-top:56px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+         font-size:13px;color:var(--paper-soft);font-family:var(--serif);letter-spacing:.06em}
+#v-home footer .seal{color:var(--vermilion);border:1px solid rgba(226,59,46,.5);
+        border-radius:50%;width:44px;height:44px;display:grid;place-items:center;
+        font-size:15px;transform:rotate(-8deg)}
+#v-home /* ── load choreography ─────────────────────────────── */
+  .rise{opacity:0;transform:translateY(26px);animation:rise .9s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+#v-home .d1{animation-delay:.05s}
+#v-home .d2{animation-delay:.18s}
+#v-home .d3{animation-delay:.32s}
+#v-home .d4{animation-delay:.46s}
+#v-home .d5{animation-delay:.6s}
+#v-home .d6{animation-delay:.74s}
+#v-home nav a.row{opacity:0;transform:translateY(20px);animation:rise .8s cubic-bezier(.16,1,.3,1) forwards}
+#v-home nav a.row:nth-child(2){animation-delay:.7s}
+#v-home nav a.row:nth-child(3){animation-delay:.82s}
+#v-home nav a.row:nth-child(4){animation-delay:.94s}
+#v-home nav a.row:nth-child(5){animation-delay:1.06s}
+@media(prefers-reduced-motion:reduce){#v-home *{animation:none!important;opacity:1!important;transform:none!important}}
+/* ===== uebersicht ===== */
+#v-uebersicht{
+    --bg:#0a0a12;
+    --bg2:#11111d;
+    --card:#16162400;
+    --ink:#f4f4f8;
+    --muted:#8b8ba0;
+    --red:#ff2d55;
+    --red-deep:#d10f3a;
+    --pink:#ff4d8d;
+    --cyan:#19e3ff;
+    --gold:#ffcc4d;
+    --line:rgba(255,255,255,.08);
+    --glass:rgba(255,255,255,.04);
+  }
+#v-uebersicht *{box-sizing:border-box;margin:0;padding:0}
+#v-uebersicht{scroll-behavior:smooth}
+#v-uebersicht{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+#v-uebersicht ::selection{background:var(--red);color:#fff}
+#v-uebersicht /* ---------- BACKDROP ---------- */
+  .bg-fx{position:fixed;inset:0;z-index:-2;overflow:hidden}
+#v-uebersicht .bg-fx::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(255,45,85,.18), transparent 60%),
+      radial-gradient(900px 500px at 10% 20%, rgba(25,227,255,.10), transparent 55%),
+      radial-gradient(800px 800px at 50% 120%, rgba(255,77,141,.12), transparent 60%),
+      linear-gradient(180deg,#0a0a12,#0c0c16 60%,#08080f);
+  }
+#v-uebersicht .grid-fx{position:fixed;inset:0;z-index:-1;opacity:.25;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 80%);
+  }
+#v-uebersicht .sun{position:fixed;top:-180px;right:-120px;width:520px;height:520px;border-radius:50%;
+    background:radial-gradient(circle at 50% 50%, rgba(255,45,85,.55), rgba(255,45,85,.05) 60%, transparent 70%);
+    filter:blur(8px);z-index:-1;animation:pulse 8s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.08);opacity:1}}
+#v-uebersicht .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+#v-uebersicht /* ---------- HERO ---------- */
+  header.hero{min-height:96vh;display:flex;flex-direction:column;justify-content:center;position:relative;padding-top:40px}
+#v-uebersicht .kanji-watermark{position:absolute;right:-10px;top:6%;font-size:min(34vw,420px);font-weight:800;color:#fff;opacity:.035;line-height:.8;letter-spacing:-.05em;pointer-events:none;user-select:none}
+#v-uebersicht .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.32em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line);padding:8px 16px;border-radius:100px;background:var(--glass);backdrop-filter:blur(8px);width:fit-content}
+#v-uebersicht .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.3}}
+#v-uebersicht h1.title{font-size:clamp(56px,11vw,150px);font-weight:800;line-height:.92;letter-spacing:-.04em;margin:22px 0 10px}
+#v-uebersicht h1.title .jp{display:block;font-size:clamp(22px,4vw,48px);color:var(--red);font-weight:700;letter-spacing:.1em;margin-bottom:8px;text-shadow:0 0 30px rgba(255,45,85,.5)}
+#v-uebersicht h1.title .grad{background:linear-gradient(100deg,#fff 10%,var(--pink) 55%,var(--cyan));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#v-uebersicht .subtitle{font-size:clamp(16px,2.4vw,24px);color:var(--muted);max-width:620px;margin-top:6px}
+#v-uebersicht .subtitle b{color:var(--ink);font-weight:600}
+#v-uebersicht .hero-stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:42px}
+#v-uebersicht .stat{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:18px 24px;backdrop-filter:blur(10px);min-width:130px;position:relative;overflow:hidden}
+#v-uebersicht .stat::after{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,var(--red),var(--pink),transparent)}
+#v-uebersicht .stat .n{font-size:34px;font-weight:800;letter-spacing:-.02em;line-height:1}
+#v-uebersicht .stat .l{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+#v-uebersicht .scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:8px}
+#v-uebersicht .scroll-hint .arr{width:1px;height:38px;background:linear-gradient(var(--cyan),transparent);animation:drop 2s infinite}
+@keyframes drop{0%{opacity:0;transform:translateY(-10px)}50%{opacity:1}100%{opacity:0;transform:translateY(10px)}}
+#v-uebersicht /* ---------- SECTION ---------- */
+  section{padding:90px 0;position:relative}
+#v-uebersicht .sec-head{display:flex;align-items:flex-end;gap:18px;margin-bottom:46px;flex-wrap:wrap}
+#v-uebersicht .sec-num{font-size:14px;color:var(--red);font-weight:700;letter-spacing:.2em;border:1px solid var(--red);border-radius:8px;padding:4px 10px}
+#v-uebersicht h2.sec-title{font-size:clamp(30px,5vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1}
+#v-uebersicht h2.sec-title .jp{font-size:.5em;color:var(--muted);font-weight:500;margin-left:14px;letter-spacing:.1em}
+#v-uebersicht /* ---------- CREW ---------- */
+  .crew{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+#v-uebersicht .member{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative;overflow:hidden;transition:.35s cubic-bezier(.2,.8,.2,1)}
+#v-uebersicht .member:hover{transform:translateY(-6px);border-color:var(--red);box-shadow:0 24px 50px -20px rgba(255,45,85,.4)}
+#v-uebersicht .member .av{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--red),var(--pink));color:#fff;margin-bottom:16px;box-shadow:0 8px 24px -6px rgba(255,45,85,.6)}
+#v-uebersicht .member h3{font-size:20px;font-weight:700}
+#v-uebersicht .member .role{font-size:13px;color:var(--cyan);margin-top:4px;letter-spacing:.04em}
+#v-uebersicht .member .tag{position:absolute;top:18px;right:18px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:3px 8px;border-radius:100px}
+#v-uebersicht .member.boss .av{background:linear-gradient(135deg,var(--gold),#ff9d2d);box-shadow:0 8px 24px -6px rgba(255,204,77,.6)}
+#v-uebersicht .member.boss{border-color:rgba(255,204,77,.3)}
+#v-uebersicht /* ---------- TIMELINE ---------- */
+  .timeline{position:relative;padding-left:8px}
+#v-uebersicht .timeline::before{content:"";position:absolute;left:26px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--red),var(--pink),var(--cyan))}
+#v-uebersicht .phase{position:relative;padding:0 0 14px 70px;margin-bottom:8px}
+#v-uebersicht .phase .node{position:absolute;left:16px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--bg);border:3px solid var(--red);box-shadow:0 0 0 4px rgba(255,45,85,.15)}
+#v-uebersicht .phase.cyan .node{border-color:var(--cyan);box-shadow:0 0 0 4px rgba(25,227,255,.15)}
+#v-uebersicht .phase.gold .node{border-color:var(--gold);box-shadow:0 0 0 4px rgba(255,204,77,.15)}
+#v-uebersicht .phase-card{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:26px 28px;backdrop-filter:blur(6px);transition:.3s}
+#v-uebersicht .phase-card:hover{border-color:var(--line);transform:translateX(4px)}
+#v-uebersicht .phase-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+#v-uebersicht .phase .ph-num{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--red);font-weight:700}
+#v-uebersicht .phase.cyan .ph-num{color:var(--cyan)}
+#v-uebersicht .phase.gold .ph-num{color:var(--gold)}
+#v-uebersicht .phase .dates{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+#v-uebersicht .phase h3{font-size:24px;font-weight:800;letter-spacing:-.02em}
+#v-uebersicht .phase .loc{font-size:14px;color:var(--cyan);margin-top:2px}
+#v-uebersicht .phase p{color:var(--muted);font-size:15px;margin-top:10px}
+#v-uebersicht .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+#v-uebersicht .chip{font-size:12.5px;padding:6px 12px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#cfcfe0}
+#v-uebersicht .chip::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--red);margin-right:7px;vertical-align:middle}
+#v-uebersicht /* ---------- ROADTRIP ---------- */
+  .road-banner{border-radius:28px;overflow:hidden;position:relative;border:1px solid var(--line);background:var(--bg2)}
+#v-uebersicht .road-banner img{width:100%;height:300px;object-fit:cover;opacity:.55;display:block}
+#v-uebersicht .road-banner .ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,15,.92),rgba(8,8,15,.3));display:flex;flex-direction:column;justify-content:center;padding:0 48px}
+#v-uebersicht .road-banner .ov h3{font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-.02em}
+#v-uebersicht .road-banner .ov p{color:var(--muted);max-width:440px;margin-top:8px}
+#v-uebersicht .route{display:flex;align-items:stretch;gap:0;margin-top:30px;flex-wrap:wrap}
+#v-uebersicht .stop{flex:1;min-width:150px;background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:20px;position:relative;transition:.3s}
+#v-uebersicht .stop:hover{border-color:var(--cyan);transform:translateY(-4px)}
+#v-uebersicht .stop .d{font-size:12px;color:var(--cyan);letter-spacing:.1em;font-weight:600}
+#v-uebersicht .stop h4{font-size:18px;font-weight:700;margin:6px 0 4px}
+#v-uebersicht .stop p{font-size:13px;color:var(--muted)}
+#v-uebersicht .route .arrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:22px}
+#v-uebersicht /* ---------- BUDGET ---------- */
+  .budget-grid{display:grid;grid-template-columns:340px 1fr;gap:48px;align-items:center}
+#v-uebersicht .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:18px}
+#v-uebersicht .donut{width:300px;height:300px;border-radius:50%;position:relative;
+    background:conic-gradient(
+      var(--red) 0 26.8%,
+      var(--pink) 26.8% 55.5%,
+      var(--cyan) 55.5% 87.6%,
+      var(--gold) 87.6% 96.6%,
+      #7c5cff 96.6% 100%
+    );
+    box-shadow:0 30px 80px -30px rgba(255,45,85,.5)}
+#v-uebersicht .donut::after{content:"";position:absolute;inset:58px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 30px rgba(0,0,0,.6)}
+#v-uebersicht .donut .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#v-uebersicht .donut .center .big{font-size:40px;font-weight:800;letter-spacing:-.02em}
+#v-uebersicht .donut .center .sm{font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+#v-uebersicht .budget-list{display:flex;flex-direction:column;gap:4px}
+#v-uebersicht .brow{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+#v-uebersicht .brow .sw{width:14px;height:14px;border-radius:4px;flex:0 0 auto}
+#v-uebersicht .brow .nm{flex:1;font-weight:600}
+#v-uebersicht .brow .sub{font-size:12.5px;color:var(--muted);font-weight:400;display:block}
+#v-uebersicht .brow .amt{font-weight:800;font-variant-numeric:tabular-nums;font-size:18px}
+#v-uebersicht .brow.total .amt{color:var(--gold);font-size:22px}
+#v-uebersicht /* ---------- STAY TABLE ---------- */
+  .stays{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+#v-uebersicht .stay{background:var(--glass);border:1px solid var(--line);border-radius:18px;position:relative;overflow:hidden;transition:.3s}
+#v-uebersicht .stay:hover{transform:translateY(-5px);border-color:var(--line);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
+#v-uebersicht .stay .photo{width:100%;height:160px;object-fit:cover;display:block}
+#v-uebersicht .stay .pad{padding:18px 22px 22px}
+#v-uebersicht .stay .bar{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red);z-index:2}
+#v-uebersicht .stay.c2 .bar{background:var(--cyan)}
+#v-uebersicht .stay.c3 .bar{background:var(--gold)}
+#v-uebersicht .stay.c4 .bar{background:var(--pink)}
+#v-uebersicht .stay.c5 .bar{background:#7c5cff}
+#v-uebersicht .stay .dt{font-size:12px;color:var(--cyan);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+#v-uebersicht .stay h4{font-size:20px;font-weight:800;margin:4px 0 6px}
+#v-uebersicht .stay .addr{font-size:13px;color:var(--muted)}
+#v-uebersicht .stay .host{font-size:12px;color:#cfcfe0;margin-top:12px;display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid var(--line)}
+#v-uebersicht .stay .host span:last-child{color:var(--muted)}
+#v-uebersicht /* ---------- CHECKLIST ---------- */
+  .progress-head{display:flex;align-items:center;gap:20px;margin-bottom:30px;flex-wrap:wrap}
+#v-uebersicht .pbar{flex:1;min-width:240px;height:16px;border-radius:100px;background:rgba(255,255,255,.06);overflow:hidden;position:relative;border:1px solid var(--line)}
+#v-uebersicht .pbar .fill{height:100%;width:78%;border-radius:100px;background:linear-gradient(90deg,var(--red),var(--pink),var(--cyan));box-shadow:0 0 20px rgba(255,45,85,.5);position:relative}
+#v-uebersicht .pbar .fill::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:shine 2.6s infinite}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+#v-uebersicht .pct{font-size:30px;font-weight:800;color:var(--cyan)}
+#v-uebersicht .checks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+#v-uebersicht .check{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14.5px}
+#v-uebersicht .check .box{width:24px;height:24px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800}
+#v-uebersicht .check.done .box{background:linear-gradient(135deg,#1fd86b,#10b894);color:#062;box-shadow:0 4px 14px -4px rgba(31,216,107,.6)}
+#v-uebersicht .check.done{color:#cfcfe0}
+#v-uebersicht .check.open .box{background:rgba(255,255,255,.06);border:1.5px dashed var(--gold);color:var(--gold)}
+#v-uebersicht .check.open{border-color:rgba(255,204,77,.3)}
+#v-uebersicht .check.open .label b{color:var(--gold)}
+#v-uebersicht .check .when{font-size:11px;color:var(--muted);display:block;margin-top:1px}
+#v-uebersicht /* ---------- FOOTER ---------- */
+  footer{padding:80px 0 60px;text-align:center;border-top:1px solid var(--line);margin-top:40px}
+#v-uebersicht footer .big{font-size:clamp(40px,9vw,110px);font-weight:800;letter-spacing:-.04em;line-height:.9;background:linear-gradient(100deg,#fff,var(--red),var(--pink));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#v-uebersicht footer .jp{font-size:clamp(20px,4vw,40px);color:var(--red);font-weight:700;letter-spacing:.2em;margin-top:10px}
+#v-uebersicht footer .meta{color:var(--muted);font-size:13px;margin-top:24px;letter-spacing:.1em}
+#v-uebersicht .reveal{opacity:0;transform:translateY(30px);transition:.7s cubic-bezier(.2,.8,.2,1)}
+#v-uebersicht .reveal.in{opacity:1;transform:none}
+@media(max-width:760px){#v-uebersicht .budget-grid{grid-template-columns:1fr}
+#v-uebersicht .donut{width:240px;height:240px}
+#v-uebersicht .donut::after{inset:46px}
+#v-uebersicht .road-banner .ov{padding:0 24px;background:linear-gradient(180deg,rgba(8,8,15,.6),rgba(8,8,15,.95))}
+#v-uebersicht .route .arrow{flex-basis:100%;height:24px;transform:rotate(90deg)}}
+#v-uebersicht /* === Sumi-Ink Editorial Retheme (frontend-design) — überschreibt Palette & Fonts,#v-uebersicht Layout bleibt === */
+  :root{
+    --bg:#1c1f2b!important; --bg2:#23273a!important; --card:rgba(35,39,58,.42)!important;
+    --ink:#f6f1e6!important; --muted:#cfc8b8!important;
+    --red:#f04634!important; --red-deep:#c12b20!important; --pink:#ff6a55!important;
+    --cyan:#6f9bb5!important; --gold:#e7b552!important;
+    --line:rgba(246,241,230,.16)!important; --glass:rgba(246,241,230,.05)!important;
+  }
+#v-uebersicht{font-family:"Zen Kaku Gothic New",sans-serif!important;
+       background:linear-gradient(165deg,#252939 0%, #1c1f2b 46%, #181a26 100%)!important}
+#v-uebersicht h1,#v-uebersicht h2,#v-uebersicht h3,#v-uebersicht h4,#v-uebersicht .title,#v-uebersicht .day-title,#v-uebersicht .daytitle,#v-uebersicht .phase,#v-uebersicht .phase-title,#v-uebersicht .hero h1,#v-uebersicht .stay-name,#v-uebersicht .big{
+       font-family:"Shippori Mincho B1",serif!important;letter-spacing:.01em}
+#v-uebersicht /* Atmosphäre — hinter allem (z-index:-1),#v-uebersicht verdeckt keinen Content */
+  .jp-sun{position:fixed;z-index:-1;border-radius:50%;width:min(56vw,560px);aspect-ratio:1;
+    right:-12vw;top:-15vw;filter:blur(2px);pointer-events:none;animation:jpbreathe 9s ease-in-out infinite;
+    background:radial-gradient(circle,#f04634 0%,#b5281f 38%,rgba(120,24,18,0) 70%)}
+@keyframes jpbreathe{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.04);opacity:.95}}
+#v-uebersicht .jp-grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.03;mix-blend-mode:overlay}
+/* ===== tagesplan ===== */
+#v-tagesplan{
+    --ink:#f4f4f8; --muted:#9a9ab2; --line:rgba(255,255,255,.12);
+    --glass:rgba(255,255,255,.05); --red:#ff2d55; --pink:#ff4d8d; --cyan:#19e3ff; --gold:#ffcc4d;
+  }
+#v-tagesplan *{box-sizing:border-box;margin:0;padding:0}
+#v-tagesplan{scroll-behavior:smooth}
+#v-tagesplan{background:#08080f;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+#v-tagesplan ::selection{background:var(--red);color:#fff}
+#v-tagesplan a{color:inherit}
+#v-tagesplan /* ───────── DYNAMIC BACKGROUND STAGE (crossfade layers) ───────── */
+  .bg-stage{position:fixed;inset:0;z-index:-2;overflow:hidden}
+#v-tagesplan .bg-layer{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;will-change:opacity;background-size:cover;background-position:center;transform:scale(1.06)}
+#v-tagesplan .bg-layer.active{opacity:1;animation:kenburns 26s ease-out forwards}
+@keyframes kenburns{from{transform:scale(1.06)}to{transform:scale(1.17)}}
+#v-tagesplan .bg-layer::after{content:"";position:absolute;inset:0;background:
+    linear-gradient(180deg,rgba(6,6,12,.42) 0%,rgba(6,6,12,.28) 30%,rgba(6,6,12,.72) 76%,rgba(6,6,12,.92) 100%),
+    radial-gradient(ellipse 95% 85% at 50% 36%, transparent 32%, rgba(6,6,12,.55) 100%)}
+#v-tagesplan .grain{position:fixed;inset:0;z-index:-1;opacity:.5;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:54px 54px;
+    mask-image:radial-gradient(ellipse 90% 70% at 50% 30%, #000 25%, transparent 85%);opacity:.18}
+#v-tagesplan /* ───────── TOP BAR ───────── */
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
+    padding:14px 22px;backdrop-filter:blur(12px);background:linear-gradient(180deg,rgba(8,8,15,.7),transparent)}
+#v-tagesplan .topbar a.back{font-size:13px;letter-spacing:.06em;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:8px;transition:.2s}
+#v-tagesplan .topbar a.back:hover{color:#fff}
+#v-tagesplan .now{font-size:13px;letter-spacing:.08em;color:#fff;font-weight:600;display:flex;align-items:center;gap:10px}
+#v-tagesplan .now .pill{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line);padding:3px 10px;border-radius:100px;background:var(--glass)}
+#v-tagesplan .pbar{position:fixed;top:0;left:0;height:3px;z-index:31;background:linear-gradient(90deg,var(--red),var(--pink),var(--cyan));width:0;transition:width .15s ease;box-shadow:0 0 12px rgba(255,45,85,.6)}
+#v-tagesplan /* ───────── DOT NAV ───────── */
+  .dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:30;display:flex;flex-direction:column;gap:9px;align-items:center}
+#v-tagesplan .dots button{width:9px;height:9px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.22);cursor:pointer;transition:.25s;position:relative}
+#v-tagesplan .dots button:hover{background:#fff;transform:scale(1.3)}
+#v-tagesplan .dots button.on{background:var(--red);box-shadow:0 0 10px var(--red);transform:scale(1.45)}
+#v-tagesplan .dots button .tip{position:absolute;right:18px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:11px;background:rgba(0,0,0,.8);border:1px solid var(--line);padding:3px 8px;border-radius:6px;opacity:0;pointer-events:none;transition:.2s}
+#v-tagesplan .dots button:hover .tip{opacity:1}
+@media(max-width:760px){#v-tagesplan .dots{display:none}}
+#v-tagesplan /* ───────── SLIDE ───────── */
+  .slide{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;padding:96px 28px 80px;scroll-margin-top:0}
+#v-tagesplan .frame{position:absolute;inset:0;pointer-events:none}
+#v-tagesplan .corner{position:absolute;pointer-events:auto}
+#v-tagesplan .corner.tl{top:78px;left:30px}
+#v-tagesplan .corner.tr{top:80px;right:30px;text-align:right}
+#v-tagesplan .corner.bl{bottom:34px;left:30px}
+#v-tagesplan .corner.br{bottom:34px;right:30px;text-align:right}
+#v-tagesplan .daynum{font-size:clamp(60px,11vw,150px);font-weight:800;line-height:.8;letter-spacing:-.05em;
+    background:linear-gradient(160deg,#fff,rgba(255,255,255,.25));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:.9}
+#v-tagesplan .daynum small{display:block;font-size:14px;letter-spacing:.3em;color:var(--muted);-webkit-text-fill-color:var(--muted);font-weight:600;margin-top:8px}
+#v-tagesplan .datebox .wd{font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:var(--cyan)}
+#v-tagesplan .datebox .dt{font-size:26px;font-weight:800;letter-spacing:-.01em}
+#v-tagesplan .stay-badge{display:flex;align-items:center;gap:12px;background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:12px 16px;backdrop-filter:blur(10px);max-width:300px}
+#v-tagesplan .stay-badge .ic{font-size:22px}
+#v-tagesplan .stay-badge .thumb{width:52px;height:52px;border-radius:11px;object-fit:cover;flex:0 0 auto;box-shadow:0 4px 14px -4px rgba(0,0,0,.6)}
+#v-tagesplan .stay-badge .nm{font-size:14px;font-weight:700;line-height:1.2}
+#v-tagesplan .stay-badge .ar{font-size:11.5px;color:var(--muted)}
+#v-tagesplan .stay-badge .ho{font-size:10.5px;color:var(--muted);opacity:.8;margin-top:2px}
+#v-tagesplan .phase-badge{display:inline-flex;flex-direction:column;align-items:flex-end;gap:4px}
+#v-tagesplan .phase-badge .ph{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+#v-tagesplan .phase-badge .rg{font-size:16px;font-weight:800;color:#fff}
+#v-tagesplan .phase-badge .rg::before{content:"📍 "}
+#v-tagesplan /* slide body */
+  .body{max-width:680px;width:100%;text-align:center;position:relative;z-index:2}
+#v-tagesplan .body .kicker{font-size:13px;letter-spacing:.28em;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:14px}
+#v-tagesplan .body h2{font-size:clamp(30px,5.5vw,58px);font-weight:800;letter-spacing:-.03em;line-height:1.02;margin-bottom:26px}
+#v-tagesplan .plan{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:520px;margin:0 auto}
+#v-tagesplan .item{display:flex;gap:14px;align-items:flex-start;background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:13px 16px;backdrop-filter:blur(8px)}
+#v-tagesplan .item .tm{flex:0 0 56px;font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;color:var(--cyan);padding-top:1px}
+#v-tagesplan .item .tx{font-size:15px;line-height:1.45}
+#v-tagesplan .item.fix{border-color:rgba(31,216,107,.35)}
+#v-tagesplan .item.fix .tm{color:#1fd86b}
+#v-tagesplan .item.idee{border-color:rgba(157,140,255,.4);background:rgba(157,140,255,.06)}
+#v-tagesplan .item.idee .tm{color:#9d8cff}
+#v-tagesplan .item .badge{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);border-radius:100px;padding:2px 7px;color:var(--muted);align-self:center;margin-left:auto}
+#v-tagesplan .additem{border:1.5px dashed var(--line);border-radius:14px;padding:13px 16px;color:var(--muted);font-size:13.5px;text-align:center;background:transparent}
+#v-tagesplan .empty-note{color:var(--muted);font-size:14px;font-style:italic;border:1.5px dashed var(--line);border-radius:16px;padding:22px;max-width:420px;margin:0 auto}
+@media(max-width:760px){#v-tagesplan .corner.tl{top:66px;left:18px}
+#v-tagesplan .corner.tr{top:68px;right:18px}
+#v-tagesplan .corner.bl{left:18px;bottom:20px}
+#v-tagesplan .corner.br{right:18px;bottom:20px}
+#v-tagesplan .daynum{font-size:54px}
+#v-tagesplan .stay-badge{max-width:190px;padding:9px 11px}
+#v-tagesplan .phase-badge .rg{font-size:13px}
+#v-tagesplan .slide{padding:120px 16px 150px}
+#v-tagesplan .body h2{margin-bottom:18px}}
+#v-tagesplan /* === Sumi-Ink Editorial Retheme (frontend-design) — überschreibt Palette & Fonts,#v-tagesplan Layout bleibt === */
+  :root{
+    --bg:#1c1f2b!important; --bg2:#23273a!important; --card:rgba(35,39,58,.42)!important;
+    --ink:#f6f1e6!important; --muted:#cfc8b8!important;
+    --red:#f04634!important; --red-deep:#c12b20!important; --pink:#ff6a55!important;
+    --cyan:#6f9bb5!important; --gold:#e7b552!important;
+    --line:rgba(246,241,230,.16)!important; --glass:rgba(246,241,230,.05)!important;
+  }
+#v-tagesplan{font-family:"Zen Kaku Gothic New",sans-serif!important;
+       background:linear-gradient(165deg,#252939 0%, #1c1f2b 46%, #181a26 100%)!important}
+#v-tagesplan h1,#v-tagesplan h2,#v-tagesplan h3,#v-tagesplan h4,#v-tagesplan .title,#v-tagesplan .day-title,#v-tagesplan .daytitle,#v-tagesplan .phase,#v-tagesplan .phase-title,#v-tagesplan .hero h1,#v-tagesplan .stay-name,#v-tagesplan .big{
+       font-family:"Shippori Mincho B1",serif!important;letter-spacing:.01em}
+#v-tagesplan /* Atmosphäre — hinter allem (z-index:-1),#v-tagesplan verdeckt keinen Content */
+  .jp-sun{position:fixed;z-index:-1;border-radius:50%;width:min(56vw,560px);aspect-ratio:1;
+    right:-12vw;top:-15vw;filter:blur(2px);pointer-events:none;animation:jpbreathe 9s ease-in-out infinite;
+    background:radial-gradient(circle,#f04634 0%,#b5281f 38%,rgba(120,24,18,0) 70%)}
+@keyframes jpbreathe{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.04);opacity:.95}}
+#v-tagesplan .jp-grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.03;mix-blend-mode:overlay}
+/* ===== ergebnisse ===== */
+#v-ergebnisse{
+    /* legacy-Namen (von der Render-Logik inline genutzt) — neu eingefärbt */
+    --bg:#1c1f2b; --card:#23273a; --card2:#2b3049; --line:rgba(246,241,230,.16);
+    --txt:#f6f1e6; --mut:#cfc8b8; --acc:#f04634; --acc2:#e7b552;
+    --good:#5cc98c; --warn:#efaa55; --bad:#f0796b; --blue:#6aa8ff;
+    /* neue Tokens */
+    --paper-soft:#e3ddcf; --vermilion:#f04634; --gold:#e7b552;
+    --serif:"Shippori Mincho B1",serif; --sans:"Zen Kaku Gothic New",sans-serif;
+  }
+#v-ergebnisse *{box-sizing:border-box}
+#v-ergebnisse{margin:0;color:var(--txt);position:relative;overflow-x:hidden;
+       background:linear-gradient(165deg,#252939 0%, var(--bg) 46%, #181a26 100%);
+       font:15.5px/1.6 var(--sans);-webkit-font-smoothing:antialiased;padding:30px 18px 90px}
+#v-ergebnisse /* Atmosphäre */
+  .sun{position:fixed;z-index:0;border-radius:50%;width:min(56vw,560px);aspect-ratio:1;
+       right:-12vw;top:-16vw;filter:blur(2px);animation:breathe 9s ease-in-out infinite;
+       background:radial-gradient(circle,var(--vermilion) 0%,#b5281f 38%,rgba(120,24,18,0) 70%)}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.04);opacity:1}}
+#v-ergebnisse .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay}
+#v-ergebnisse .rail{position:fixed;top:0;left:max(10px,1.4vw);height:100vh;z-index:1;display:flex;
+        flex-direction:column;justify-content:space-between;padding:28px 0;pointer-events:none}
+#v-ergebnisse .rail span{writing-mode:vertical-rl;font-family:var(--serif);letter-spacing:.3em;font-size:13px;color:var(--paper-soft);opacity:.6}
+#v-ergebnisse .rail .big{font-size:30px;color:var(--vermilion);opacity:.85;font-weight:700}
+@media(max-width:900px){#v-ergebnisse .rail{display:none}}
+#v-ergebnisse .wrap{max-width:1000px;margin:0 auto;position:relative;z-index:2}
+#v-ergebnisse header.top{margin-bottom:6px}
+#v-ergebnisse .eyebrow{font-family:var(--serif);font-size:13px;letter-spacing:.36em;text-transform:uppercase;
+           color:var(--gold);font-weight:600;display:flex;align-items:center;gap:12px;margin-bottom:10px}
+#v-ergebnisse .eyebrow::before{content:"";width:38px;height:1px;background:var(--gold);opacity:.7}
+#v-ergebnisse h1{font-family:var(--serif);font-weight:800;font-size:clamp(30px,5.4vw,52px);margin:0;line-height:.96;letter-spacing:-.01em}
+#v-ergebnisse h1 .jp{color:var(--vermilion)}
+#v-ergebnisse .sub{color:var(--paper-soft);font-size:15px;font-family:var(--serif);margin-top:8px;display:block}
+#v-ergebnisse .crew{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 30px}
+#v-ergebnisse .chip{background:var(--card2);border:1px solid var(--line);border-radius:999px;
+        padding:6px 14px;font-size:13.5px;color:var(--txt);font-family:var(--serif)}
+#v-ergebnisse .chip.miss{color:var(--mut);opacity:.5;border-style:dashed}
+#v-ergebnisse .chip b{color:var(--acc2)}
+#v-ergebnisse section{background:linear-gradient(180deg,var(--card),#1e2233);border:1px solid var(--line);border-radius:16px;
+          padding:24px 26px;margin-bottom:18px;box-shadow:0 18px 50px -28px #000;position:relative;overflow:hidden}
+#v-ergebnisse section::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--vermilion),var(--gold));opacity:.8}
+#v-ergebnisse h2{font-family:var(--serif);font-weight:700;font-size:20px;margin:0 0 20px;display:flex;align-items:center;gap:10px;letter-spacing:.01em}
+#v-ergebnisse h2 .tag{font-size:12.5px;color:var(--paper-soft);font-weight:400;font-family:var(--sans);margin-left:auto;letter-spacing:.02em}
+#v-ergebnisse .row{display:flex;align-items:center;gap:14px;margin:11px 0}
+#v-ergebnisse .row .lbl{flex:0 0 auto;min-width:0}
+#v-ergebnisse .row .lbl .name{font-size:15px;font-family:var(--serif);font-weight:600}
+#v-ergebnisse .row .lbl .sub{font-size:12px;color:var(--paper-soft)}
+#v-ergebnisse .bar{flex:1;height:12px;background:#14172680;border-radius:7px;overflow:hidden;position:relative;border:1px solid var(--line)}
+#v-ergebnisse .bar > i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,var(--vermilion),var(--gold))}
+#v-ergebnisse .val{flex:0 0 auto;font-variant-numeric:tabular-nums;color:var(--gold);font-size:13.5px;min-width:66px;text-align:right;font-family:var(--serif);font-weight:600}
+#v-ergebnisse .fire{color:var(--vermilion);font-size:12.5px}
+#v-ergebnisse .rank{display:flex;gap:14px;align-items:center;padding:12px 14px;border-radius:12px;margin:7px 0;background:#252a4080;border:1px solid var(--line)}
+#v-ergebnisse .rank .pos{font-family:var(--serif);font-size:22px;font-weight:800;color:var(--vermilion);min-width:36px;text-align:center}
+#v-ergebnisse .rank .meta{margin-left:auto;text-align:right;font-size:12.5px;color:var(--paper-soft);white-space:nowrap}
+#v-ergebnisse .rank .meta b{color:var(--txt);font-size:16px;font-family:var(--serif)}
+#v-ergebnisse .rank.top1{background:linear-gradient(90deg,rgba(240,70,52,.16),#252a40);border-color:rgba(240,70,52,.5);box-shadow:0 0 26px -10px var(--vermilion) inset}
+#v-ergebnisse .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:680px){#v-ergebnisse .grid2{grid-template-columns:1fr}}
+#v-ergebnisse .vs{display:flex;align-items:stretch;gap:6px;margin:12px 0}
+#v-ergebnisse .vs .opt{flex:1;background:#252a4080;border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center}
+#v-ergebnisse .vs .opt .ic{font-size:24px}
+#v-ergebnisse .vs .opt .t{font-size:12.5px;color:var(--paper-soft);margin:4px 0 8px}
+#v-ergebnisse .vs .opt .n{font-size:24px;font-weight:800;font-family:var(--serif)}
+#v-ergebnisse .vs .opt.win{border-color:var(--vermilion);background:rgba(240,70,52,.12)}
+#v-ergebnisse .vs .opt.win .n{color:var(--gold)}
+#v-ergebnisse .vs .q{flex:0 0 130px;display:flex;align-items:center;font-size:13.5px;color:var(--paper-soft);font-family:var(--serif)}
+@media(max-width:680px){#v-ergebnisse .vs{flex-wrap:wrap}
+#v-ergebnisse .vs .q{flex-basis:100%}}
+#v-ergebnisse .pill{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:8px;
+        padding:3px 9px;margin:3px 4px 3px 0;font-size:12.5px}
+#v-ergebnisse .person{margin:0 0 16px;padding:0 0 14px;border-bottom:1px dashed var(--line)}
+#v-ergebnisse .person:last-child{border:0;margin-bottom:0;padding-bottom:0}
+#v-ergebnisse .person .pn{font-family:var(--serif);font-weight:700;color:var(--gold);margin-bottom:6px;font-size:16px}
+#v-ergebnisse .person .qa{font-size:14px;margin:4px 0}
+#v-ergebnisse .person .qa b{color:var(--paper-soft);font-weight:500}
+#v-ergebnisse .empty{color:var(--paper-soft);text-align:center;padding:30px;font-style:italic;font-family:var(--serif)}
+#v-ergebnisse .konsens .item{display:flex;align-items:center;gap:8px;font-size:14px;margin:6px 0}
+#v-ergebnisse .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}
+#v-ergebnisse footer{color:var(--paper-soft);font-size:13px;text-align:center;margin-top:34px;font-family:var(--serif);letter-spacing:.04em}
+#v-ergebnisse details summary{cursor:pointer;color:var(--paper-soft);font-size:12.5px}
+</style>
+<style id="overrides">
+  /* Tagesplan: Div-Hintergrund transparent, damit der fixed .bg-stage (z-index:-2) durchscheint.
+     #v-tagesplan darf KEIN Stacking-Context sein (keine opacity/transform), sonst wird der
+     negative z-index eingesperrt — daher die vfade-Opacity-Animation für diese View deaktiviert. */
+  html #v-tagesplan{background:transparent!important}
+</style>
+</head>
+<body>
+<header class="appnav">
+  <a class="brand" href="#/home">日本 <b>’26</b></a>
+  <nav>
+    <a data-view="home" href="#/home">Hub</a>
+    <a data-view="uebersicht" href="#/uebersicht">全体図 · Übersicht</a>
+    <a data-view="tagesplan" href="#/tagesplan">日程 · Tagesplan</a>
+    <a data-view="ergebnisse" href="#/ergebnisse">結果 · Auswertung</a>
+    <a class="ext" href="https://matsluca.github.io/japan-umfrage/umfrage.html" target="_blank" rel="noopener">Umfrage ↗</a>
+  </nav>
+</header>
+<main>
+<div id="v-home" class="view">
+
+  <div class="sun"></div>
+  <div class="glow"></div>
+  <svg class="grain"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#g)"/></svg>
+
+  <div class="rail">
+    <span class="big">日本</span>
+    <span>旅 ・ 二〇二六 ・ ＴＯＫＹＯ</span>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <div class="eyebrow rise d1">クルー・ウィキ &nbsp;/&nbsp; The Crew Wiki</div>
+      <h1 class="title rise d2">
+        <span class="jp">ニッポン・エスケープ</span>
+        JAPAN <span class="yr">’26</span>
+      </h1>
+      <div class="meta rise d3">
+        <span><b>22. Juli</b> – <b>18. August 2026</b></span>
+        <span>28 Tage</span>
+        <span class="route">東京 → 富士 → 伊豆 → 関西 → お盆</span>
+      </div>
+
+      <div class="count rise d4">
+        <div class="lead">出発まで</div>
+        <div class="cu"><span class="n" id="d">–</span><span class="l">Tage</span></div>
+        <div class="cu sep"><span class="n" id="h">–</span><span class="l">Std</span></div>
+        <div class="cu sep"><span class="n" id="m">–</span><span class="l">Min</span></div>
+        <div class="cu sep"><span class="n" id="s">–</span><span class="l">Sek</span></div>
+      </div>
+      <div id="countlabel" style="font-family:var(--serif);color:var(--paper-soft);letter-spacing:.08em;font-size:14.5px" class="rise d4">bis zum Abflug ✈</div>
+
+      <div class="crew rise d5">
+        <span class="k">クルー — 6 Mann</span>
+        <span class="nm">Mats</span><span class="dot">・</span><span class="nm">Sebastian</span><span class="dot">・</span><span class="nm">Marko</span><span class="dot">・</span><span class="nm">Emre</span><span class="dot">・</span><span class="nm">Hendrik</span> <small>bis 08.08.</small><span class="dot">・</span><span class="nm">Cristobal</span> <small>ab 28.07.</small>
+      </div>
+    </header>
+
+    <nav>
+      <div class="nav-h rise d6">目次 — Index</div>
+
+      <a class="row" href="#/uebersicht">
+        <span class="idx">01</span>
+        <span class="mid">
+          <span class="ttl">Übersicht <span class="kanji">全体図</span></span>
+          <span class="desc">Das Dashboard — Crew, Route, Budget &amp; alle sechs Unterkünfte auf einen Blick.</span>
+          <span class="badge">Status &amp; Logistik</span>
+        </span>
+        <span class="arr">→</span>
+      </a>
+
+      <a class="row" href="#/tagesplan">
+        <span class="idx">02</span>
+        <span class="mid">
+          <span class="ttl">Tagesplan <span class="kanji">日程</span></span>
+          <span class="desc">Alle 28 Tage, Slide für Slide — mit den Aktivitäten direkt aus der Crew-Umfrage.</span>
+          <span class="badge">Tag für Tag</span>
+        </span>
+        <span class="arr">→</span>
+      </a>
+
+      <a class="row" href="#/ergebnisse">
+        <span class="idx">03</span>
+        <span class="mid">
+          <span class="ttl">Auswertung <span class="kanji">結果</span></span>
+          <span class="desc">Was die Crew wirklich will — Vibe-Profil, Must-See-Ranking &amp; Konsens.</span>
+          <span class="badge">6 / 6 Antworten ✓</span>
+        </span>
+        <span class="arr">→</span>
+      </a>
+
+      <a class="row" href="https://matsluca.github.io/japan-umfrage/umfrage.html" target="_blank" rel="noopener">
+        <span class="idx">04</span>
+        <span class="mid">
+          <span class="ttl">Umfrage <span class="kanji">調査</span></span>
+          <span class="desc">Das Formular — nochmal durchklicken oder eingehende Codes auswerten.</span>
+          <span class="badge">Mitmachen</span>
+        </span>
+        <span class="arr">→</span>
+      </a>
+    </nav>
+
+    <footer>
+      <span>Crew-internes Reise-Wiki · keine exakten Adressen</span>
+      <span class="seal">旅</span>
+      <span>Strong Zero approved 🍶</span>
+    </footer>
+  </div>
+
+
+
+</div>
+<div id="v-uebersicht" class="view">
+
+<div class="bg-fx"></div><div class="grid-fx"></div><div class="sun"></div>
+
+
+<header class="hero">
+  <div class="kanji-watermark">日本</div>
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span>The Classic Escalation · Summer Edition</span>
+    <h1 class="title">
+      <span class="jp">日本 2026</span>
+      <span class="grad">JAPAN</span> ODYSSEE
+    </h1>
+    <p class="subtitle">Vier Wochen, sechs Mann, ein Van. Von <b>Tokyos Neon</b> über den <b>Fuji</b> und die <b>Izu-Küste</b> bis zum <b>Streetfood-Krieg in Osaka</b> — und zurück ins Obon-Finale.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="n">28</div><div class="l">Tage</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">Crew</div></div>
+      <div class="stat"><div class="n">6</div><div class="l">Bases</div></div>
+      <div class="stat"><div class="n">5</div><div class="l">Phasen</div></div>
+      <div class="stat"><div class="n">&lt;4k€</div><div class="l">pro Person</div></div>
+    </div>
+    <a href="Japan_2026_Tagesplan.html" style="display:inline-flex;align-items:center;gap:10px;margin-top:34px;padding:16px 28px;border-radius:100px;background:linear-gradient(100deg,var(--red),var(--pink));color:#fff;text-decoration:none;font-weight:700;letter-spacing:.02em;font-size:16px;box-shadow:0 16px 40px -12px rgba(255,45,85,.6);transition:.25s;width:fit-content" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">📅 Tagesplan öffnen — alle 28 Tage <span style="font-size:20px">→</span></a>
+  </div>
+  <div class="scroll-hint">Scroll<div class="arr"></div></div>
+</header>
+
+
+<section class="wrap reveal">
+  <div class="sec-head"><span class="sec-num">01</span><h2 class="sec-title">Die Crew<span class="jp">仲間</span></h2></div>
+  <div class="crew">
+    <div class="member boss"><div class="av">M</div><span class="tag">Lead</span><h3>Mats</h3><div class="role">Boss · Orga</div></div>
+    <div class="member"><div class="av">S</div><h3>Sebastian</h3><div class="role">Crew</div></div>
+    <div class="member"><div class="av">M</div><h3>Marko</h3><div class="role">Driver 🚗</div></div>
+    <div class="member"><div class="av">E</div><h3>Emre</h3><div class="role">Driver 🚗</div></div>
+    <div class="member"><div class="av">H</div><span class="tag">bis 08.08.</span><h3>Hendrik</h3><div class="role">Rückreise früh</div></div>
+    <div class="member"><div class="av">C</div><span class="tag">ab 28.07.</span><h3>Cristobal</h3><div class="role">Gourmet</div></div>
+  </div>
+</section>
+
+
+<section class="wrap reveal">
+  <div class="sec-head"><span class="sec-num">02</span><h2 class="sec-title">Die Route<span class="jp">旅程</span></h2></div>
+  <div class="timeline">
+    <div class="phase">
+      <div class="node"></div>
+      <div class="phase-card">
+        <div class="phase-meta"><span class="ph-num">Phase 1</span><span class="dates">22.07 – 30.07</span></div>
+        <h3>Nostalgie & Ankunft</h3><div class="loc">📍 Tokyo · Sumida-ku (Skytree)</div>
+        <p>Veteranen-Start, Einleben in Tokyo. Cristobal stößt am 28.07. dazu.</p>
+        <div class="chips"><span class="chip">Akihabara</span><span class="chip">Ueno & Yanaka</span><span class="chip">Harajuku / Meiji</span><span class="chip">teamLab</span><span class="chip">Shibuya Sky</span></div>
+      </div>
+    </div>
+    <div class="phase cyan">
+      <div class="node"></div>
+      <div class="phase-card">
+        <div class="phase-meta"><span class="ph-num">Phase 2 · The Great Escape</span><span class="dates">31.07 – 04.08</span></div>
+        <h3>Roadtrip im Van 🚐</h3><div class="loc">📍 Kawaguchiko → Izu → Shimoda</div>
+        <p>4 Nächte volle Freiheit: Fuji-Vibes, Onsen, Eishöhlen und der Sprung in den Pazifik.</p>
+        <div class="chips"><span class="chip">Chureito Pagode</span><span class="chip">Lake Motosuko</span><span class="chip">Ice Caves</span><span class="chip">Izu Skyline</span><span class="chip">Shirahama Beach</span><span class="chip">Ryugu Sea Cave</span></div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="node"></div>
+      <div class="phase-card">
+        <div class="phase-meta"><span class="ph-num">Phase 3 · Peak</span><span class="dates">05.08 – 07.08</span></div>
+        <h3>Shibuya Peak</h3><div class="loc">📍 Tokyo · Shibuya (zentral)</div>
+        <p>Full Crew, volle Power. Letzte Tage mit Hendrik vor seiner Abreise.</p>
+        <div class="chips"><span class="chip">Shibuya Crossing</span><span class="chip">Karaoke-Nacht</span><span class="chip">🥩 Kobe Beef (Idee)</span></div>
+      </div>
+    </div>
+    <div class="phase gold">
+      <div class="node"></div>
+      <div class="phase-card">
+        <div class="phase-meta"><span class="ph-num">Phase 4 · Kansai</span><span class="dates">08.08 – 12.08</span></div>
+        <h3>Kansai-Expedition 🚅</h3><div class="loc">📍 Osaka · Izumisano</div>
+        <p>Shinkansen runter. Tempel-Kultur in Kyoto, Streetfood-Eskalation in Dotonbori.</p>
+        <div class="chips"><span class="chip">Kiyomizu-dera</span><span class="chip">🎮 Nintendo Museum</span><span class="chip">Universal Studios (Option)</span><span class="chip">Nara Rehe</span><span class="chip">Dotonbori</span></div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="node"></div>
+      <div class="phase-card">
+        <div class="phase-meta"><span class="ph-num">Phase 5 · Finale</span><span class="dates">13.08 – 18.08</span></div>
+        <h3>Obon-Finale & Ausklang 🎆</h3><div class="loc">📍 Tokyo · Sumida-ku</div>
+        <p>Sommerfest-Stimmung. Zurück VOR der großen Obon-Reisewelle. Letzte Ramen, dann Sayonara.</p>
+        <div class="chips"><span class="chip">Matsuri-Feste</span><span class="chip">Final Shopping</span><span class="chip">Last Night Action</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="wrap reveal">
+  <div class="sec-head"><span class="sec-num">03</span><h2 class="sec-title">Das Grand Finale<span class="jp">ロードトリップ</span></h2></div>
+  <div class="road-banner">
+    <img src="assets/img/072410ce5596.jpg" alt="Roadtrip Fuji Drive">
+    <div class="ov">
+      <h3>Metro-Karte raus,<br>Autoschlüssel rein.</h3>
+      <p>7-Sitzer Van, Musik an, Küstenstraßen der Izu-Halbinsel. Da, wo kein Shinkansen hält. Fahrer: Emre & Marko.</p>
+    </div>
+  </div>
+  <div class="route">
+    <div class="stop"><div class="d">31.07</div><h4>Tokyo → Fuji</h4><p>Van-Pickup, Chureito Pagode, Onsen am See.</p></div>
+    <div class="arrow">→</div>
+    <div class="stop"><div class="d">01.08</div><h4>Water & Ice</h4><p>Lake Motosuko baden, Eishöhlen, BBQ mit Fuji-View.</p></div>
+    <div class="arrow">→</div>
+    <div class="stop"><div class="d">02.08</div><h4>Izu Skyline</h4><p>Bergstraße nach Shimoda, Sprung in den Pazifik.</p></div>
+    <div class="arrow">→</div>
+    <div class="stop"><div class="d">03.08</div><h4>Beach Life</h4><p>Shirahama Beach, Ryugu Sea Cave, Seafood-Dinner.</p></div>
+    <div class="arrow">→</div>
+    <div class="stop"><div class="d">04.08</div><h4>→ Tokyo</h4><p>Küstenfahrt über Atami, Van-Abgabe, Reunion.</p></div>
+  </div>
+</section>
+
+
+<section class="wrap reveal">
+  <div class="sec-head"><span class="sec-num">04</span><h2 class="sec-title">Budget<span class="jp">予算</span></h2></div>
+  <div class="budget-grid">
+    <div class="donut-wrap">
+      <div class="donut"><div class="center"><div class="big">~3.490€</div><div class="sm">pro Person</div></div></div>
+      <div style="color:var(--muted);font-size:13px">Ist-Stand laut Master-Excel · Ziel &lt; 4.000 € ✅</div>
+    </div>
+    <div class="budget-list">
+      <div class="brow"><span class="sw" style="background:var(--red)"></span><span class="nm">Flug <span class="sub">✅ gebucht</span></span><span class="amt">935€</span></div>
+      <div class="brow"><span class="sw" style="background:var(--pink)"></span><span class="nm">Unterkunft <span class="sub">Anteil · gesamt 5.422€ / 6 Airbnbs</span></span><span class="amt">~1.000€</span></div>
+      <div class="brow"><span class="sw" style="background:var(--cyan)"></span><span class="nm">Verpflegung <span class="sub">40€ Tagesbudget · Conbini</span></span><span class="amt">1.120€</span></div>
+      <div class="brow"><span class="sw" style="background:var(--gold)"></span><span class="nm">Zugtickets Kansai <span class="sub">Anteil · gesamt ~1.000€</span></span><span class="amt">~200€</span></div>
+      <div class="brow"><span class="sw" style="background:#7c5cff"></span><span class="nm">Mietwagen-Phase <span class="sub">Van 539 + Sprit 100 + Maut 50</span></span><span class="amt">~115€</span></div>
+      <div class="brow total"><span class="sw" style="background:rgba(255,255,255,.2)"></span><span class="nm">Gesamt</span><span class="amt">~3.490€</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="wrap reveal">
+  <div class="sec-head"><span class="sec-num">05</span><h2 class="sec-title">Unterkünfte<span class="jp">宿</span></h2><span style="color:var(--cyan);font-size:13px;border:1px solid var(--line);padding:4px 12px;border-radius:100px">Alle 6 ✅ gebucht</span></div>
+  <div class="stays">
+    <div class="stay c1"><div class="bar"></div><img class="photo" src="assets/img/34e2d9ef6568.jpg" alt="Tokyo Sumida" loading="lazy"><div class="pad"><div class="dt">23.07 – 31.07</div><h4>Tokyo · Sumida</h4><div class="addr">Narihira, Sumida City — Skytree Area</div><div class="host"><span>Host: 雲逸</span><span>16:00 / 10:00</span></div></div></div>
+    <div class="stay c2"><div class="bar"></div><img class="photo" src="assets/img/5239985a518c.jpg" alt="Fujikawaguchiko" loading="lazy"><div class="pad"><div class="dt">31.07 – 02.08</div><h4>Fujikawaguchiko</h4><div class="addr">Saiko, Yamanashi — Fuji-Vibes</div><div class="host"><span>Host: Weekend House Saiko</span><span>15:00 / 10:00</span></div></div></div>
+    <div class="stay c3"><div class="bar"></div><img class="photo" src="assets/img/6ef70e31f7a7.jpg" alt="Shimoda" loading="lazy"><div class="pad"><div class="dt">02.08 – 04.08</div><h4>Shimoda</h4><div class="addr">Rokuchome, Shizuoka — Beach House</div><div class="host"><span>Host: Jeffrey Dana</span><span>15:00 / 11:00</span></div></div></div>
+    <div class="stay c4"><div class="bar"></div><img class="photo" src="assets/img/b756205bcb81.jpg" alt="Shibuya" loading="lazy"><div class="pad"><div class="dt">04.08 – 08.08</div><h4>Tokyo · Shibuya</h4><div class="addr">Shibuya — Zentraler Hub</div><div class="host"><span>Host: KAWASAKI Corp.</span><span>16:00 / 11:00</span></div></div></div>
+    <div class="stay c5"><div class="bar"></div><img class="photo" src="assets/img/b562badd712d.jpg" alt="Osaka Izumisano" loading="lazy"><div class="pad"><div class="dt">08.08 – 12.08</div><h4>Osaka · Izumisano</h4><div class="addr">Ōnishi, Izumisano — Reihenhaus</div><div class="host"><span>Host: Mino</span><span>15:00 / 10:00</span></div></div></div>
+    <div class="stay c1"><div class="bar"></div><img class="photo" src="assets/img/ceb917c2cc7a.jpg" alt="Tokyo Sumida Finale" loading="lazy"><div class="pad"><div class="dt">12.08 – 18.08</div><h4>Tokyo · Sumida</h4><div class="addr">Taihei, Sumida City — Finale Base</div><div class="host"><span>Host: Nago</span><span>16:00 / 10:00</span></div></div></div>
+  </div>
+</section>
+
+
+<section class="wrap reveal">
+  <div class="sec-head"><span class="sec-num">06</span><h2 class="sec-title">Status<span class="jp">準備</span></h2></div>
+  <div class="progress-head">
+    <span class="pct">82%</span>
+    <div class="pbar"><div class="fill" style="width:82%"></div></div>
+    <span style="color:var(--muted);font-size:14px">9 von 11 erledigt</span>
+  </div>
+  <div class="checks">
+    <div class="check done"><span class="box">✓</span><span class="label">Flüge gebucht</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">Alle 6 Unterkünfte</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">Mietwagen-Van reserviert</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">Suica im Apple Wallet</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">JAF-Führerschein-Übersetzung</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">Reisepässe geprüft</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">eSIMs bestellt</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">Kreditkarten & Limits</span></div>
+    <div class="check done"><span class="box">✓</span><span class="label">Nintendo-Verlosung beworben</span></div>
+    <div class="check open"><span class="box">!</span><span class="label"><b>Shinkansen-Tickets</b><span class="when">buchbar ~ab 09.07. (Smart-EX)</span></span></div>
+    <div class="check open"><span class="box">!</span><span class="label"><b>teamLab Planets</b><span class="when">für Phase 1</span></span></div>
+  </div>
+
+  <h3 style="margin:40px 0 16px;font-size:20px;font-weight:800;color:var(--muted);letter-spacing:.04em">💭 Offene Optionen <span style="font-size:13px;font-weight:500">(später entscheiden)</span></h3>
+  <div class="checks">
+    <div class="check open" style="border-color:rgba(124,92,255,.35)"><span class="box" style="border-color:#9d8cff;color:#9d8cff">?</span><span class="label"><b style="color:#9d8cff">Universal Studios + Express</b><span class="when">~120–230€ p.P. · Peak 10.08. · siehe USJ_OPTION.md</span></span></div>
+    <div class="check open" style="border-color:rgba(124,92,255,.35)"><span class="box" style="border-color:#9d8cff;color:#9d8cff">?</span><span class="label"><b style="color:#9d8cff">Nikko Side-Quest</b><span class="when">2. Roadtrip Norden · siehe NIKKO_OPTION.md</span></span></div>
+    <div class="check open" style="border-color:rgba(124,92,255,.35)"><span class="box" style="border-color:#9d8cff;color:#9d8cff">?</span><span class="label"><b style="color:#9d8cff">Kobe-Beef-Dinner</b><span class="when">High-End Farewell · noch nicht fix</span></span></div>
+  </div>
+</section>
+
+
+<footer class="wrap">
+  <div class="big">SAYONARA</div>
+  <div class="jp">さようなら</div>
+  <div class="meta">22.07.2026 – 18.08.2026 · Berlin ✈ Tokyo ✈ Berlin · Crew of 6</div>
+</footer>
+
+
+
+</div>
+<div id="v-tagesplan" class="view">
+
+<div class="bg-stage" id="bgStage"></div>
+<div class="grain"></div>
+
+<div class="pbar" id="pbar"></div>
+<div class="topbar">
+  <a class="back" href="Japan_2026_Übersicht.html">← Übersicht</a>
+  <div class="now"><span class="pill" id="nowPhase">Phase 1</span><span id="nowDay">Tag 01</span></div>
+</div>
+
+<nav class="dots" id="dots"></nav>
+
+<main id="deck"></main>
+
+
+
+</div>
+<div id="v-ergebnisse" class="view">
+
+  <div class="sun"></div>
+  <svg class="grain"><filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(#g)"/></svg>
+  <div class="rail"><span class="big">結果</span><span>クルー・アンケート ・ 二〇二六</span></div>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">クルー・アンケート — Stimmungsbild</div>
+    <h1><span class="jp">結果</span> · Was die Crew will</h1>
+    <span class="sub" id="meta">– lädt –</span>
+  </header>
+  <div class="crew" id="crew"></div>
+
+  <div id="content"></div>
+
+  <footer>
+    Auto-generiert aus den eingesendeten <code>JP26-</code>-Codes · self-contained ·
+    <details style="display:inline-block;margin-left:6px"><summary>Roh-Codes</summary>
+      <div id="rawdump" style="text-align:left;max-width:600px;margin:8px auto;font-family:monospace;font-size:10px;color:var(--mut);word-break:break-all"></div>
+    </details>
+  </footer>
+</div>
+
+
+
+</div>
+</main>
+<script>
+function initView_home(){
+ var ROOT=document.getElementById('v-home');
+
+  const target = new Date("2026-07-22T00:00:00+09:00").getTime();
+  const el = { d:ROOT.querySelector('#d'), h:ROOT.querySelector('#h'),
+               m:ROOT.querySelector('#m'), s:ROOT.querySelector('#s'),
+               label:ROOT.querySelector('#countlabel') };
+  function pad(n){return String(n).padStart(2,'0');}
+  function tick(){
+    const diff = target - Date.now();
+    if(diff <= 0){ el.label.textContent = "出発 — es geht los. Sayonara Deutschland!";
+      el.d.textContent=el.h.textContent=el.m.textContent=el.s.textContent="0"; return; }
+    el.d.textContent = Math.floor(diff/864e5);
+    el.h.textContent = pad(Math.floor(diff%864e5/36e5));
+    el.m.textContent = pad(Math.floor(diff%36e5/6e4));
+    el.s.textContent = pad(Math.floor(diff%6e4/1e3));
+  }
+  tick(); setInterval(tick,1000);
+
+}
+function initView_uebersicht(){
+ var ROOT=document.getElementById('v-uebersicht');
+
+  const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
+  ROOT.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  // subtle parallax on sun
+  addEventListener('scroll',()=>{const y=scrollY;ROOT.querySelector('.sun').style.transform=`translateY(${y*0.2}px)`;});
+
+}
+function initView_tagesplan(){
+ var ROOT=document.getElementById('v-tagesplan');
+
+/* ═══════════════ DATEN ═══════════════ */
+
+// Unterkünfte — eine Quelle, von den Tagen referenziert via `stay`-Key
+const IMGBASE = ""; // (eingebettet, nicht mehr genutzt)
+const IMGDATA = {
+  "sumida1.jpg": "assets/img/34e2d9ef6568.jpg",
+  "fuji.jpg": "assets/img/5239985a518c.jpg",
+  "shimoda.jpg": "assets/img/6ef70e31f7a7.jpg",
+  "shibuya.jpg": "assets/img/b756205bcb81.jpg",
+  "osaka.jpg": "assets/img/b562badd712d.jpg",
+  "sumida2.jpg": "assets/img/ceb917c2cc7a.jpg"
+};
+const STAYS = {
+  flight  : { ic:"✈️", nm:"Im Flugzeug",          ar:"BER ⇄ Tokyo",            ho:"—",                         img:null },
+  sumida1 : { ic:"🏠", nm:"Tokyo · Sumida",        ar:"Sumida-ku · Skytree",    ho:"Host: 雲逸",                 img:"sumida1.jpg" },
+  fuji    : { ic:"🏔️", nm:"Weekend House Saiko",   ar:"Fujikawaguchiko",        ho:"Host: Weekend House Saiko", img:"fuji.jpg" },
+  shimoda : { ic:"🏖️", nm:"Shimoda Beach House",   ar:"Shimoda · Shizuoka",     ho:"Host: Jeffrey Dana",        img:"shimoda.jpg" },
+  shibuya : { ic:"🏙️", nm:"Shibuya Penthouse",     ar:"Shibuya · Tokyo",        ho:"Host: KAWASAKI Corp.",      img:"shibuya.jpg" },
+  osaka   : { ic:"🏯", nm:"Izumisano Reihenhaus",  ar:"Osaka · Izumisano",      ho:"Host: Mino",                img:"osaka.jpg" },
+  sumida2 : { ic:"🏠", nm:"Tokyo · Sumida",        ar:"Sumida-ku · Skytree",    ho:"Host: Nago",                img:"sumida2.jpg" },
+};
+
+// Die 28 Tage. plan-Items: { t:"Uhrzeit"|"", txt:"…", tag:"fix"|"idee"|undefined }
+const DAYS = [
+  { n:1, bg:"flight",  date:"22.07.", wd:"Mi", phase:"Phase 1", phaseFull:"Phase 1 · Ankunft", region:"Anreise",        theme:"tokyo", stay:"flight",
+    title:"Departure ✈️", plan:[ {t:"",txt:"Abflug Berlin Brandenburg (BER) → Peking (PEK)", tag:"fix"} ] },
+  { n:2, bg:"skytree",  date:"23.07.", wd:"Do", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Sumida",   theme:"tokyo", stay:"sumida1",
+    title:"Touchdown Tokyo", plan:[ {t:"",txt:"Landung Narita (NRT) · Transfer nach Sumida", tag:"fix"}, {t:"16:00",txt:"Check-in Airbnb (Sumida)", tag:"fix"}, {t:"abends",txt:"Erstes Strong Zero Date am Sumida River / Skytree 🔥 (Sake = Umfrage-Konsens)", tag:"fix"} ] },
+  { n:3, bg:"akihabara",  date:"24.07.", wd:"Fr", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Akihabara",theme:"tokyo", stay:"sumida1",
+    title:"Akihabara Day", plan:[ {t:"",txt:"Arcade, Tech & Conbini-Gourmet (7-Eleven Egg Sandwiches) 🔥 Hendrik", tag:"fix"}, {t:"",txt:"Vintage-Uhren-Laden (Hendrik-Idee)", tag:"idee"}, {t:"",txt:"Goofy-Juice-Automaten-Verkostung (Seb-Idee)", tag:"idee"} ] },
+  { n:4, bg:"tokyo",  date:"25.07.", wd:"Sa", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Ueno",     theme:"tokyo", stay:"sumida1",
+    title:"Ueno & Yanaka", plan:[ {t:"",txt:"Chillen im Park, altes Tokyo", tag:"fix"}, {t:"abends",txt:"Shinjuku Chaos 🔥 Seb", tag:"fix"}, {t:"",txt:"Suga-Schrein — die „Your Name“-Treppe (Seb-Idee)", tag:"idee"} ] },
+  { n:5, bg:"meiji",  date:"26.07.", wd:"So", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Harajuku", theme:"tokyo", stay:"sumida1",
+    title:"Harajuku & Meiji", plan:[ {t:"",txt:"Yoyogi Park Vibe (Sonntags-Action)", tag:"fix"}, {t:"",txt:"Themen-Café 🔥 Hendrik (Harajuku)", tag:"idee"} ] },
+  { n:6, bg:"onsen",  date:"27.07.", wd:"Mo", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Sumida",   theme:"tokyo", stay:"sumida1",
+    title:"Chill Day", plan:[ {t:"",txt:"Sento-Besuch, Wäsche waschen, Energie tanken", tag:"fix"}, {t:"abends",txt:"Förderband-Sushi zum Dinner 🔥 (Umfrage-Topwunsch, Ø2.2)", tag:"idee"} ] },
+  { n:7, bg:"shinjuku",  date:"28.07.", wd:"Di", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Shinjuku", theme:"tokyo", stay:"sumida1",
+    title:"Cristobal Arrival 🎉", plan:[ {t:"",txt:"Welcome Party — Shinjuku Golden Gai oder Skytree Chill", tag:"fix"}, {t:"",txt:"Strong Zero zum Anstoßen 🔥 (Crew ab heute komplett)", tag:"idee"} ] },
+  { n:8, bg:"tokyo",  date:"29.07.", wd:"Mi", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Bay (Toyosu/Odaiba)",  theme:"tokyo", stay:"sumida1",
+    title:"Bay Day · Toyosu & Odaiba", plan:[ {t:"vorm.",txt:"Sushi-Frühstück am Toyosu-Fischmarkt 🔥 Hendrik/Emre", tag:"idee"}, {t:"nachm.",txt:"Odaiba — Gundam & Bay-Vibes 🔥 Marko", tag:"idee"}, {t:"",txt:"⚠️ teamLab Planets als Sidequest für Interessierte — NICHT VERGESSEN (Umfrage nur Marko 🔥, daher kein eigener Tag mehr)", tag:"idee"}, {t:"",txt:"teamLab-Tickets vorab buchen, falls die Gruppe es macht", tag:"idee"} ] },
+  { n:9, bg:"tokyo",  date:"30.07.", wd:"Do", phase:"Phase 1", phaseFull:"Phase 1 · Tokyo", region:"Tokyo · Sumida",   theme:"tokyo", stay:"sumida1",
+    title:"Roadtrip Prep", plan:[ {t:"",txt:"Road-Snacks im Don Quijote kaufen (= Mega-Shopping)", tag:"fix"}, {t:"abends",txt:"Karaoke-Nacht vor dem Roadtrip 🔥 (Umfrage Ø2.4, 3×🔥)", tag:"idee"} ] },
+
+  { n:10, bg:"chureito", date:"31.07.", wd:"Fr", phase:"Phase 2", phaseFull:"Phase 2 · Roadtrip", region:"Fuji · Kawaguchiko", theme:"fuji", stay:"fuji",
+    title:"Tokyo → Fuji 🚐", plan:[ {t:"vorm.",txt:"Van-Pickup in Tokyo · Fahrt Richtung Fuji", tag:"fix"}, {t:"",txt:"Chureito Pagode (klassisches Fuji-Foto) & Houtou-Nudeln 🔥 Fuji = Konsens", tag:"fix"}, {t:"abends",txt:"Check-in am See & Onsen-Besuch (z.B. Yurari)", tag:"fix"} ] },
+  { n:11, bg:"fuji", date:"01.08.", wd:"Sa", phase:"Phase 2", phaseFull:"Phase 2 · Roadtrip", region:"Fuji · Five Lakes", theme:"fuji", stay:"fuji",
+    title:"Water & Ice", plan:[ {t:"vorm.",txt:"Lake Motosuko — baden & SUP (klarstes Wasser der 5 Seen)", tag:"fix"}, {t:"nachm.",txt:"Aokigahara Ice Caves (~0 °C Abkühlung)", tag:"fix"}, {t:"abends",txt:"BBQ am Haus, Strong Zero & Fuji-View", tag:"fix"} ] },
+  { n:12, bg:"izu", date:"02.08.", wd:"So", phase:"Phase 2", phaseFull:"Phase 2 · Roadtrip", region:"Izu · Shimoda", theme:"izu", stay:"shimoda",
+    title:"Izu Skyline Drive", plan:[ {t:"vorm.",txt:"Abfahrt Süden über die Izu Skyline (Fenster runter, Musik an)", tag:"fix"}, {t:"nachm.",txt:"Ankunft Shimoda · Sprung in den Pazifik am Shirahama Beach 🔥 Strand-Wunsch", tag:"fix"} ] },
+  { n:13, bg:"izu", date:"03.08.", wd:"Mo", phase:"Phase 2", phaseFull:"Phase 2 · Roadtrip", region:"Izu · Shimoda", theme:"izu", stay:"shimoda",
+    title:"Beach Life", plan:[ {t:"ganztags",txt:"Chill-Modus am Strand", tag:"fix"}, {t:"",txt:"Ryugu Sea Cave (natürliches Oberlicht über dem Meer)", tag:"fix"}, {t:"abends",txt:"Seafood-Dinner & Strand-Vibes", tag:"fix"} ] },
+  { n:14, bg:"tokyo", date:"04.08.", wd:"Di", phase:"Phase 2", phaseFull:"Phase 2 · Roadtrip", region:"Shimoda → Tokyo", theme:"tokyo", stay:"shibuya",
+    title:"Shimoda → Tokyo", plan:[ {t:"vorm.",txt:"Küstenfahrt hoch nach Atami", tag:"fix"}, {t:"~17:00",txt:"Rückfahrt Tokyo & Van-Abgabe", tag:"fix"}, {t:"abends",txt:"Check-in Shibuya & Reunion mit der Full-Crew", tag:"fix"} ] },
+
+  { n:15, bg:"tokyo", date:"05.08.", wd:"Mi", phase:"Phase 3", phaseFull:"Phase 3 · Shibuya Peak", region:"Tokyo · Shibuya", theme:"tokyo", stay:"shibuya",
+    title:"Shibuya Chaos", plan:[ {t:"",txt:"Crossing, Shopping, Hachiko", tag:"fix"}, {t:"abends",txt:"Shibuya Sky", tag:"fix"} ] },
+  { n:16, bg:"shinjuku", date:"06.08.", wd:"Do", phase:"Phase 3", phaseFull:"Phase 3 · Shibuya Peak", region:"Tokyo · Shibuya", theme:"tokyo", stay:"shibuya",
+    title:"Crazy Stuff", plan:[ {t:"abends",txt:"Karaoke-Nacht 🔥 (Umfrage-Favorit, Ø2.4 / 3×🔥)", tag:"fix"}, {t:"",txt:"VR-Arcade als Sidequest 🔥 Hendrik", tag:"idee"} ] },
+  { n:17, bg:"kobe", date:"07.08.", wd:"Fr", phase:"Phase 3", phaseFull:"Phase 3 · Shibuya Peak", region:"Tokyo · Shibuya", theme:"tokyo", stay:"shibuya",
+    title:"Farewell Hendrik", plan:[ {t:"",txt:"Abschied Hendrik (Rückreise am 08.)", tag:"fix"}, {t:"vorm.",txt:"Hendriks Rest-Wünsche bündeln (Akiba/Café/Conbini)", tag:"idee"}, {t:"abends",txt:"High-End Wagyu/Kobe-Beef-Dinner 🔥 Hendrik (löst Abschied + Top-Food in einem)", tag:"idee"} ] },
+
+  { n:18, bg:"shinkansen", date:"08.08.", wd:"Sa", phase:"Phase 4", phaseFull:"Phase 4 · Kansai", region:"Osaka · Dotonbori", theme:"osaka", stay:"osaka",
+    title:"Tokyo → Osaka 🚅", plan:[ {t:"",txt:"Shinkansen-Fahrt nach Shin-Osaka", tag:"fix"}, {t:"",txt:"Tickets ~ab 09.07. via Smart-EX buchen", tag:"idee"}, {t:"",txt:"Check-in Izumisano", tag:"fix"}, {t:"abends",txt:"Dotonbori Eskalation · Streetfood & Takoyaki", tag:"fix"}, {t:"",txt:"Umeda Sky Building (Seb-Idee)", tag:"idee"} ] },
+  { n:19, bg:"kyoto", date:"09.08.", wd:"So", phase:"Phase 4", phaseFull:"Phase 4 · Kansai", region:"Kyoto", theme:"kyoto", stay:"osaka",
+    title:"Kyoto Classic", plan:[ {t:"",txt:"Kiyomizu-dera 🔥 Seb", tag:"fix"}, {t:"",txt:"Nintendo Museum 🔥 Konsens (falls Losglück!) — Anker des Tages", tag:"idee"}, {t:"",txt:"Sidequests: Fushimi Inari / Bambuswald falls Zeit", tag:"idee"} ] },
+  { n:20, bg:"osaka", date:"10.08.", wd:"Mo", phase:"Phase 4", phaseFull:"Phase 4 · Kansai", region:"Osaka · USJ ??", theme:"osaka", stay:"osaka",
+    title:"Universal Studios ??", plan:[ {t:"",txt:"?? USJ Super Nintendo World — Umfrage gespalten (Ø1.75), noch OFFEN", tag:"idee"}, {t:"",txt:"Split-Day möglich 🔀: Team USJ ↔ Team Kyoto-Tempel/Nara", tag:"idee"}, {t:"",txt:"Crew entscheidet noch — siehe USJ_OPTION.md", tag:"idee"} ] },
+  { n:21, bg:"nara", date:"11.08.", wd:"Di", phase:"Phase 4", phaseFull:"Phase 4 · Kansai", region:"Nara / Osaka", theme:"kyoto", stay:"osaka",
+    title:"Nara oder Chill", plan:[ {t:"",txt:"Rehe füttern in Nara 🔥 Konsens #2 (4×🔥) — oder in Osaka treiben lassen", tag:"fix"} ] },
+  { n:22, bg:"shinkansen", date:"12.08.", wd:"Mi", phase:"Phase 4", phaseFull:"Phase 4 · Kansai", region:"Osaka → Tokyo", theme:"tokyo", stay:"sumida2",
+    title:"Osaka → Tokyo", plan:[ {t:"",txt:"Rückreise zur Final Base in Sumida", tag:"fix"} ] },
+
+  { n:23, bg:"matsuri", date:"13.08.", wd:"Do", phase:"Phase 5", phaseFull:"Phase 5 · Obon-Finale", region:"Tokyo · Sumida", theme:"tokyo", stay:"sumida2",
+    title:"Obon & Matsuri 🎆", plan:[ {t:"",txt:"Lokale Tempelfeste suchen", tag:"fix"}, {t:"",txt:"Yukata/Kimono fürs Matsuri (optional)", tag:"idee"} ] },
+  { n:24, bg:"ginza", date:"14.08.", wd:"Fr", phase:"Phase 5", phaseFull:"Phase 5 · Obon-Finale", region:"Tokyo · Sumida", theme:"tokyo", stay:"sumida2",
+    title:"Final Shopping", plan:[ {t:"",txt:"Mitbringsel & Tech-Check", tag:"fix"}, {t:"",txt:"Tokyo Jumbo Golf Center (Cristobal-Idee)", tag:"idee"} ] },
+  { n:25, bg:"skytree", date:"15.08.", wd:"Sa", phase:"Phase 5", phaseFull:"Phase 5 · Obon-Finale", region:"Tokyo · Sumida", theme:"tokyo", stay:"sumida2",
+    title:"Last Night Action", plan:[ {t:"",txt:"Nochmal Strong Zero unterm Skytree & letzte „Crazy Tendenzen“ 🔥 Sake-Finale", tag:"fix"}, {t:"",txt:"„Nachts durch Tokyo ohne Plan“ (Mats’ #1 Must-Do) · Golden Gai", tag:"idee"} ] },
+  { n:26, bg:"ramen", date:"16.08.", wd:"So", phase:"Phase 5", phaseFull:"Phase 5 · Obon-Finale", region:"Tokyo · Sumida", theme:"tokyo", stay:"sumida2",
+    title:"Chill & Pack", plan:[ {t:"",txt:"Letzte Ramen, Koffer packen", tag:"fix"}, {t:"",txt:"Ramen-Finale 🔥 (Cristobals #1 Must-Do) · optional Sterneküche", tag:"idee"} ] },
+  { n:27, bg:"tokyo", date:"17.08.", wd:"Mo", phase:"Phase 5", phaseFull:"Phase 5 · Obon-Finale", region:"Tokyo · Sumida", theme:"tokyo", stay:"sumida2",
+    title:"Last Day", plan:[ {t:"",txt:"Voller Fokus auf Lieblings-Essen & Crew-Vibe (Food-Vibe Ø8.5)", tag:"fix"}, {t:"",txt:"Foodie-Lieblingsessen-Tour: Förderband-Sushi / Themen-Café", tag:"idee"} ] },
+  { n:28, bg:"flight", date:"18.08.", wd:"Di", phase:"Phase 5", phaseFull:"Heimreise", region:"Tokyo → Berlin", theme:"tokyo", stay:"flight",
+    title:"Departure · Sayonara 👋", plan:[ {t:"",txt:"Rückflug nach Berlin", tag:"fix"} ] },
+];
+
+/* ═══════════════ RENDER ═══════════════ */
+const TOTAL = DAYS.length;
+const bgStage = ROOT.querySelector('#bgStage');
+const deck = ROOT.querySelector('#deck');
+const dots = ROOT.querySelector('#dots');
+
+// 1) Hintergrund-Layer pro vorkommendem Theme erzeugen (eindeutig)
+const BGDATA = {
+  "akihabara": "assets/img/42cb737dd1f7.jpg",
+  "chureito": "assets/img/1b91c377977c.jpg",
+  "flight": "assets/img/2baf82cd6a9d.jpg",
+  "fuji": "assets/img/2236ee3f34c8.jpg",
+  "ginza": "assets/img/38838612c12b.jpg",
+  "izu": "assets/img/e3da76b2c257.jpg",
+  "kobe": "assets/img/5773beb5b972.jpg",
+  "kyoto": "assets/img/07f3866bd773.jpg",
+  "matsuri": "assets/img/4bb23f767dfe.jpg",
+  "meiji": "assets/img/638e9ee5ec3d.jpg",
+  "nara": "assets/img/97843a660266.jpg",
+  "onsen": "assets/img/7cf29eea8125.jpg",
+  "osaka": "assets/img/d80e4a87070e.jpg",
+  "ramen": "assets/img/8482e3c97310.jpg",
+  "shinjuku": "assets/img/f3262596aa67.jpg",
+  "shinkansen": "assets/img/843bc8ca3809.jpg",
+  "skytree": "assets/img/fefd0709e6f4.jpg",
+  "tokyo": "assets/img/071f46bf06a6.jpg"
+};
+const themes = [...new Set(DAYS.map(d=>d.bg))];
+themes.forEach(t=>{
+  const l=document.createElement('div');
+  l.className='bg-layer'; l.dataset.bg=t; if(BGDATA[t]) l.style.backgroundImage='url("'+BGDATA[t]+'")'; bgStage.appendChild(l);
+});
+const setTheme = (t)=>ROOT.querySelectorAll('.bg-layer').forEach(l=>l.classList.toggle('active', l.dataset.bg===t));
+setTheme(DAYS[0].bg);
+
+const esc = s => String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+
+// 2) Slides + Dots bauen
+DAYS.forEach((d,i)=>{
+  const s = STAYS[d.stay];
+  const planHtml = (d.plan && d.plan.length)
+    ? `<div class="plan">` + d.plan.map(p=>`
+        <div class="item ${p.tag||''}">
+          ${p.t?`<span class="tm">${esc(p.t)}</span>`:`<span class="tm"></span>`}
+          <span class="tx">${esc(p.txt)}</span>
+          ${p.tag==='idee'?`<span class="badge">Idee</span>`:''}
+        </div>`).join('')
+      + `<div class="additem">+ Tag weiter ausplanen …</div></div>`
+    : `<div class="empty-note">Dieser Tag ist noch ein leeres Blatt — hier kommt der Plan rein.</div>`;
+
+  const sec = document.createElement('section');
+  sec.className='slide'; sec.id='tag'+d.n; sec.dataset.idx=i; sec.dataset.theme=d.theme; sec.dataset.bg=d.bg;
+  sec.innerHTML = `
+    <div class="frame">
+      <div class="corner tl"><div class="daynum">${pad(d.n)}<small>TAG / ${TOTAL}</small></div></div>
+      <div class="corner tr"><div class="datebox"><div class="wd">${esc(d.wd)}</div><div class="dt">${esc(d.date)} 26</div></div></div>
+      <div class="corner bl"><div class="stay-badge">${s.img?`<img class="thumb" src="${IMGDATA[s.img]}" alt="${esc(s.nm)}" loading="lazy">`:`<span class="ic">${s.ic}</span>`}<div><div class="nm">${esc(s.nm)}</div><div class="ar">${esc(s.ar)}</div><div class="ho">${esc(s.ho)}</div></div></div></div>
+      <div class="corner br"><div class="phase-badge"><span class="ph">${esc(d.phaseFull)}</span><span class="rg">${esc(d.region)}</span></div></div>
+    </div>
+    <div class="body">
+      <div class="kicker">${esc(d.phase)}</div>
+      <h2>${esc(d.title)}</h2>
+      ${planHtml}
+    </div>`;
+  deck.appendChild(sec);
+
+  const b=document.createElement('button');
+  b.dataset.target='tag'+d.n;
+  b.innerHTML=`<span class="tip">Tag ${pad(d.n)} · ${esc(d.date)} · ${esc(d.region)}</span>`;
+  b.onclick=()=>document.getElementById('tag'+d.n).scrollIntoView({behavior:'smooth'});
+  dots.appendChild(b);
+});
+
+/* ═══════════════ SCROLL-LOGIK ═══════════════ */
+const slides=[...ROOT.querySelectorAll('.slide')];
+const dotBtns=[...dots.children];
+const nowDay=ROOT.querySelector('#nowDay');
+const nowPhase=ROOT.querySelector('#nowPhase');
+const pbar=ROOT.querySelector('#pbar');
+
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting && e.intersectionRatio>0.5){
+      const i=+e.target.dataset.idx, d=DAYS[i];
+      cur=i;
+      setTheme(e.target.dataset.bg);
+      dotBtns.forEach((b,j)=>b.classList.toggle('on',j===i));
+      nowDay.textContent=`Tag ${pad(d.n)} · ${d.date}26`;
+      nowPhase.textContent=d.phase;
+    }
+  });
+},{threshold:[0.5]});
+slides.forEach(s=>io.observe(s));
+
+// Progress-Bar
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;
+  pbar.style.width=p+'%';
+},{passive:true});
+
+// Tastatur: Pfeil hoch/runter springt slideweise
+let cur=0;
+addEventListener('keydown',(e)=>{
+  if(e.key==='ArrowDown'||e.key==='PageDown'){e.preventDefault();cur=Math.min(TOTAL-1,cur+1);slides[cur].scrollIntoView({behavior:'smooth'});}
+  if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();cur=Math.max(0,cur-1);slides[cur].scrollIntoView({behavior:'smooth'});}
+});
+// `cur` wird in der Theme-IO oben mitgesetzt (dort dataset.idx ausgelesen)
+
+}
+function initView_ergebnisse(){
+ var ROOT=document.getElementById('v-ergebnisse');
+
+/* ============================================================
+   QUELLE DER WAHRHEIT: eingesendete Codes (einer pro Eintrag).
+   Neuen Code aufnehmen = String unten in RAW_CODES ergänzen.
+   ============================================================ */
+const RAW_CODES = [
+  "JP26-eyJ2IjoyLCJuYW1lIjoiTWF0cyIsInMiOnsia3VsdHVyIjozLCJhY3Rpb24iOjcsIm5pZ2h0Ijo4LCJmb29kIjo5LCJjaGlsbCI6OCwibmVyZCI6M30sImMiOnsiYzEiOiJiIiwiYzIiOiJhIiwiYzMiOiJiIiwiYzQiOm51bGwsImM1IjoiYiIsImM2IjoiYiJ9LCJ3Ijp7InNoaWJ1eWEiOjEsInNreXRvd2VyIjoxLCJzaGluanVrdSI6MiwiYWtpYmEiOjEsImFzYWt1c2EiOjIsInNob3BwaW5nIjoxLCJvZGFpYmEiOjIsIm1laWppIjoyLCJraW5rYWt1IjoxLCJzdXNoaSI6MiwicmFtZW4iOjEsIndhZ3l1IjoyLCJpemFrYXlhIjoyLCJrYWl0ZW4iOjMsInNha2UiOjMsImZ1amkiOjIsImthd2FndWNoaSI6MiwiYmVhY2giOjMsImthbWFrdXJhIjoxLCJuaWtrbyI6MSwidGVhbWxhYiI6MiwiYXJjYWRlIjoxLCJzdW1vIjoxLCJiYXJob3AiOjEsImdvbGRlbmdhaSI6MX0sImlkZWFzIjp7InRva3lvIjoibWF5bmJlIGF1Y2ggZGllc2VyIHNwb3Qgd28gbWFuIGluIHRva3lvIGltbWVyIGdldHVudGUgc3V0b3Mgc2llaHQuLnVuZCBkaWUgbW9tIHZvbiBuZW0ga29sbGVnbiBoYXQgdW5zIGVtcGZvaGxlbiBpcmdlbmR3byBnaWJ0IGVzIG5lIHN0cmHDn2VtbmFobmxpbmllIHdvIGRpZSBkYW5ubiBpcmdlbmR3aWUgc28gaW0gZnJlaWVuIGbDpGhydCB1bmQgbWFuIGlyZ2VuZHdpZSBzb3p1c2FnZW4gZWluZSBmcmVpaGVpdHNzdGF0dWUgb2RlciBzbyBzZWhlbiBrYW5uIHVuZCBnYW56IGlubmRlciBuw6RoZSBtaWVudGUgc2llIGdpYnQgZXMgYXVjaCBub2NoIG5lbiBncm/Dn2VzIGdlYsOkdWRlIG1pdCBuZXIgdHJlcHBlIHdvIG1hbiBmb3IgZnJlZSBob2NoZmFocmVuIGthbm4uLiBhbnNvbnNvbnRlbiB2bGx0IGF1Y2ggYmlzc2NoZW4genVtIHN0YWR0dCBlcmt1bmRlbiBzbyBwYWFyIGtsZWdlbmTDpHJlIHNlY3JldCBzcG90cyBhdXMgYW5pbWVzIG9kZXIgZmlsbSB1bmQgZmVybnNlaGVuIGVya3VuZGVuIiwia3VsdHVyIjoiaXJnZW5kd2VsY2hlIGdlaWxlbiBrbGllbmVuIHZlcnN0ZWNrdGVuIHZpYmV5IHNwb3RzIGVudGRlY2tlbi4uIHZsbHQgZGVuIDQgdGFnZXMgYXV0byByb2FkdHJpcCBhdXNudXR6ZW4gdW0gZGEgc28ga2xlaW5lIGFic3RlY2hlciB1bSBkZW4gZnVqaSBydW0gb2RlciBzbyJ9LCJ0MSI6Im5hY2h0cyBkdXJ2Y2ggdG9reW8gb2huZSBwbGFuIG1pdCBzdHJvbWcgemVybyAiLCJ0MiI6IiIsInQzIjoiIn0=",
+  "JP26-eyJ2IjoyLCJuYW1lIjoiTWFya28iLCJzIjp7Imt1bHR1ciI6NSwiYWN0aW9uIjo1LCJuaWdodCI6NiwiZm9vZCI6NywiY2hpbGwiOjgsIm5lcmQiOjh9LCJjIjp7ImMxIjoiYiIsImMyIjoiYSIsImMzIjoiYSIsImM0IjoiYSIsImM1IjoiYSIsImM2IjoiYiIsImM3IjoiYiJ9LCJ3Ijp7InNoaWJ1eWEiOjIsInNreXRvd2VyIjoyLCJzaGluanVrdSI6MSwiYWtpYmEiOjIsImhhcmFqdWt1IjoxLCJhc2FrdXNhIjoyLCJvZGFpYmEiOjMsInNob3BwaW5nIjoxLCJmdXNoaW1pIjoyLCJuYXJhIjozLCJiYW1ib28iOjAsImtpbmtha3UiOjEsImNhc3RsZSI6MSwibWVpamkiOjIsInJ5b2thbiI6Mywid2FneXUiOjEsIml6YWtheWEiOjIsImthaXRlbiI6MSwic2FrZSI6Mywic3VzaGkiOjEsInJhbWVuIjoyLCJmdWppIjoyLCJrYXdhZ3VjaGkiOjEsImJlYWNoIjozLCJmdWppY2xpbWIiOjIsIm5pa2tvIjoxLCJ0ZWFtbGFiIjozLCJnb2thcnQiOjIsInN1bW8iOjEsInVzaiI6MSwidnIiOjEsImFyY2FkZSI6MSwia2FyYW9rZSI6MywiZ29sZGVuZ2FpIjoyLCJyb2JvdCI6MSwicGFjaGlua28iOjF9LCJpZGVhcyI6e30sInQxIjoiRnVqaSBiZXN0ZWlnZW4gIiwidDIiOiJNYXRzIHVuZ2V3YXNjaGVuZSBGw7zDn2UgZXJsZWJlbiAiLCJ0MyI6IiJ9",
+  "JP26-eyJ2IjoyLCJuYW1lIjoiSGVuZHJpayIsInMiOnsiZm9vZCI6MTAsImFjdGlvbiI6MTAsImt1bHR1ciI6NSwibmlnaHQiOjcsImNoaWxsIjoxMCwibmVyZCI6MTB9LCJjIjp7ImMxIjoiYiIsImMyIjoiYiIsImMzIjoiYSIsImM0IjoiYSIsImM1IjoiYSIsImM3IjoiYSJ9LCJ3Ijp7InNoaWJ1eWEiOjMsInNreXRvd2VyIjoyLCJzaGluanVrdSI6MiwiYWtpYmEiOjMsImhhcmFqdWt1IjoyLCJhc2FrdXNhIjoyLCJzaG9wcGluZyI6Miwib2RhaWJhIjoyLCJmdXNoaW1pIjoxLCJuYXJhIjozLCJiYW1ib28iOjEsImtpeW9taXp1IjoyLCJraW5rYWt1IjoyLCJjYXN0bGUiOjEsIm1laWppIjoyLCJ5dWthdGEiOjEsInJ5b2thbiI6MSwic3VzaGkiOjMsInJhbWVuIjoxLCJ3YWd5dSI6Mywic3RyZWV0IjoxLCJpemFrYXlhIjoyLCJjb25iaW5pIjozLCJrYWl0ZW4iOjIsInNha2UiOjMsImNhZmUiOjMsImZ1amkiOjMsImthd2FndWNoaSI6Mywib25zZW4iOjEsImJlYWNoIjoyLCJrYW1ha3VyYSI6MiwiaGFrb25lIjoxLCJuaWtrbyI6MSwiZnVqaWNsaW1iIjozLCJ1c2oiOjMsInRlYW1sYWIiOjEsImFyY2FkZSI6MiwiYmFzZWJhbGwiOjIsIm5pbnRlbiI6Miwic3VtbyI6MiwidnIiOjMsImthcmFva2UiOjMsImJhcmhvcCI6MSwiY2x1YiI6MSwiZ29sZGVuZ2FpIjoyLCJyb2JvdCI6MiwicGFjaGlua28iOjJ9LCJpZGVhcyI6eyJ0b2t5byI6IlBhZ29kZSBNdC4gRnVqaSAoV2FsZHdlZyB6dSBGdcOfIGVycmVpY2hiYXIgbWl0IGJhYmEgQXVzc2ljaHQpIn0sInQxIjoiTmFjaHRzIGFtIFNreXRyZWUgY2hpbGxlbiB1bmQgRW1yZSBlaW5lIHdlYnVudGlzIHBlcmMgcG9wcGVuIGxhc3NlbiIsInQyIjoiIiwidDMiOiJJbiBlaW5lbiBWaW50YWdlIFVocmVuLUxhZGVuIGdlaGVuIn0=",
+  "JP26-eyJ2IjoyLCJuYW1lIjoiRW1yZSIsInMiOnsiZm9vZCI6Nywia3VsdHVyIjo5LCJhY3Rpb24iOjcsIm5pZ2h0IjoyLCJjaGlsbCI6OSwibmVyZCI6OH0sImMiOnsiYzEiOiJhIiwiYzIiOiJhIiwiYzMiOiJhIiwiYzQiOiJhIiwiYzUiOiJiIiwiYzYiOiJiIiwiYzciOiJhIn0sInciOnsic2t5dG93ZXIiOjMsInNoaW5qdWt1IjoxLCJha2liYSI6MSwic2hpYnV5YSI6MiwiaGFyYWp1a3UiOjEsImFzYWt1c2EiOjIsInNob3BwaW5nIjoxLCJvZGFpYmEiOjIsImZ1c2hpbWkiOjEsIm5hcmEiOjMsImJhbWJvbyI6MSwia2l5b21penUiOjIsImtpbmtha3UiOjEsImNhc3RsZSI6MSwibWVpamkiOjEsInJ5b2thbiI6Miwic3VzaGkiOjMsInJhbWVuIjoxLCJ3YWd5dSI6Miwia2FpdGVuIjozLCJzYWtlIjozLCJmdWppIjozLCJrYXdhZ3VjaGkiOjIsImthbWFrdXJhIjoyLCJoYWtvbmUiOjIsIm5pa2tvIjoxLCJmdWppY2xpbWIiOjEsInRlYW1sYWIiOjEsImdva2FydCI6MiwiYXJjYWRlIjoxLCJ1c2oiOjEsIm5pbnRlbiI6Mywia2FyYW9rZSI6MX0sImlkZWFzIjp7fSwidDEiOiIiLCJ0MiI6IiIsInQzIjoiIn0=",
+  "JP26-eyJ2IjoyLCJuYW1lIjoiQ3Jpc3RvYmFsIiwicyI6eyJhY3Rpb24iOjMsImZvb2QiOjEwLCJuaWdodCI6NywibmVyZCI6OCwia3VsdHVyIjo3LCJjaGlsbCI6OH0sImMiOnsiYzEiOiJhIiwiYzIiOiJiIiwiYzMiOiJhIiwiYzQiOiJiIiwiYzUiOiJiIiwiYzYiOiJhIiwiYzciOiJiIn0sInciOnsic2hpYnV5YSI6Miwic2t5dG93ZXIiOjEsInNoaW5qdWt1IjoxLCJhc2FrdXNhIjoyLCJha2liYSI6MiwiaGFyYWp1a3UiOjEsInNob3BwaW5nIjoxLCJvZGFpYmEiOjEsImZ1c2hpbWkiOjIsIm5hcmEiOjIsImJhbWJvbyI6Miwia2l5b21penUiOjEsImtpbmtha3UiOjEsImNhc3RsZSI6MiwibWVpamkiOjEsInJ5b2thbiI6MSwicmFtZW4iOjMsInN1c2hpIjoyLCJ3YWd5dSI6MiwiaXpha2F5YSI6MSwic3RyZWV0IjoxLCJmdWppIjozLCJrYXdhZ3VjaGkiOjEsImJlYWNoIjoxLCJuaWtrbyI6MSwiZnVqaWNsaW1iIjoyLCJ1c2oiOjIsInRlYW1sYWIiOjEsImFyY2FkZSI6MSwibmludGVuIjozLCJzdW1vIjoxLCJrYXJhb2tlIjoyLCJiYXJob3AiOjIsImdvbGRlbmdhaSI6MSwiY2x1YiI6MX0sImlkZWFzIjp7ImZvb2QiOiJTdGVybmVrw7xjaGUiLCJmdW4iOiJUb2t5byBKdW1ibyBHb2xmIENlbnRlciIsIm5hdHVyIjoiQmVsaWNodHVuZyBlaW5lciBUZWVwbGFudGFnZSJ9LCJ0MSI6IkdlaWxlcyBlc3NlbiBSYW1lbiwgU3RyZWV0Zm9vZCBldGMuICIsInQyIjoiTW9yZ2VucyA1IFN0dW5kZW4gYWxsZWluZSBXYWNoIiwidDMiOiIifQ==",
+  "JP26-eyJ2IjoyLCJuYW1lIjoiU2ViYXN0aWFuIiwicyI6eyJmb29kIjo4LCJjaGlsbCI6OCwibmlnaHQiOjYsImt1bHR1ciI6NywiYWN0aW9uIjo3LCJuZXJkIjo3fSwiYyI6eyJjMSI6ImEiLCJjMiI6ImEiLCJjMyI6ImEiLCJjNCI6ImEiLCJjNiI6ImEiLCJjNyI6ImIifSwidyI6eyJzaGluanVrdSI6Mywic2t5dG93ZXIiOjIsInNoaWJ1eWEiOjEsImFraWJhIjoyLCJoYXJhanVrdSI6MSwib2RhaWJhIjoyLCJhc2FrdXNhIjoxLCJuYXJhIjozLCJiYW1ib28iOjEsImtpeW9taXp1IjozLCJraW5rYWt1IjoyLCJjYXN0bGUiOjIsIm1laWppIjowLCJyeW9rYW4iOjEsInN1c2hpIjoyLCJyYW1lbiI6Miwid2FneXUiOjIsIml6YWtheWEiOjIsImNvbmJpbmkiOjEsImthaXRlbiI6Miwic2FrZSI6MiwiY2FmZSI6MSwiZnVqaSI6Mywia2F3YWd1Y2hpIjozLCJvbnNlbiI6MiwiYmVhY2giOjIsImthbWFrdXJhIjoyLCJoYWtvbmUiOjIsIm5pa2tvIjoyLCJmdWppY2xpbWIiOjEsInRlYW1sYWIiOjEsImdva2FydCI6MSwiYXJjYWRlIjowLCJuaW50ZW4iOjIsInN1bW8iOjEsInZyIjoxLCJrYXJhb2tlIjozLCJiYXJob3AiOjIsImNsdWIiOjEsImdvbGRlbmdhaSI6MCwicm9ib3QiOjEsInBhY2hpbmtvIjoyfSwiaWRlYXMiOnsidG9reW8iOiJVbWVkYSBza3kgYnVpbGRpbmcgb3Nha2EiLCJrdWx0dXIiOiJTdWdhIHNocmluZSAodG9raW8pOyBidXJnIG5pam8ga3lvdG8iLCJmb29kIjoiR29vZnkganVpY2UgYXV0b21hdGVuIHZlcmtvc3R1bmcg8J+UpSJ9LCJ0MSI6IkJlc3VjaCBpbiBkZXIgMjQvNyB3w6RzY2hlcmVpIiwidDIiOiJVcmxhdWIgMTAwJSBkdXJjaHRha3RlbiIsInQzIjoiIn0=",
+];
+
+const CREW = ["Mats","Sebastian","Marko","Emre","Hendrik","Cristobal"];
+
+/* --- Schema-Labels (synchron mit Umfrage-HTML) --- */
+const VIBES = [
+  {k:"kultur", l:"⛩️ Kultur & Geschichte"},
+  {k:"action", l:"⚡ Action & Adrenalin"},
+  {k:"night",  l:"🍻 Nightlife & Feiern"},
+  {k:"food",   l:"🍜 Essen & Genuss"},
+  {k:"chill",  l:"♨️ Natur & Entspannung"},
+  {k:"nerd",   l:"🎮 Anime, Gaming & Tech"},
+];
+const CHOICES = [
+  {k:"c1", q:"Was zieht dich mehr?",      a:{ic:"⛩️",t:"Tempel"},               b:{ic:"🗼",t:"Tower / Skyline"}},
+  {k:"c2", q:"Beim Essen lieber…",        a:{ic:"🍜",t:"Ramen-Bude"},           b:{ic:"🍽️",t:"Fine Dining"}},
+  {k:"c3", q:"Der perfekte Morgen?",      a:{ic:"🌅",t:"Sonnenaufgang am Fuji"}, b:{ic:"😴",t:"Ausschlafen"}},
+  {k:"c4", q:"Abends eher…",              a:{ic:"🎤",t:"Karaoke"},              b:{ic:"🍸",t:"Bar-Hopping"}},
+  {k:"c5", q:"Wie sollen die Tage sein?", a:{ic:"⚡",t:"Vollgepackt"},           b:{ic:"🌿",t:"Entspannt"}},
+  {k:"c6", q:"Dein Rhythmus?",            a:{ic:"🐓",t:"Frühaufsteher"},         b:{ic:"🦉",t:"Nachteule"}},
+  {k:"c7", q:"Reise-Stil?",               a:{ic:"🗺️",t:"Lieber geplant"},       b:{ic:"🎲",t:"Spontan"}},
+];
+const GROUPS = [
+  {key:"tokyo", t:"🗼 Tokyo & Stadt-Vibes", items:[
+    {k:"shibuya",l:"Shibuya Crossing & Shibuya Sky"},{k:"skytower",l:"Tokyo Skytree / Tokyo Tower"},
+    {k:"shinjuku",l:"Shinjuku bei Nacht"},{k:"akiba",l:"Akihabara"},{k:"harajuku",l:"Harajuku & Takeshita-Street"},
+    {k:"asakusa",l:"Asakusa & Sensō-ji"},{k:"shopping",l:"Mega-Shopping"},{k:"odaiba",l:"Odaiba"},
+  ]},
+  {key:"kultur", t:"⛩️ Kultur & Klassiker", items:[
+    {k:"fushimi",l:"Fushimi Inari – die roten Tore"},{k:"nara",l:"Nara – die zahmen Rehe"},
+    {k:"bamboo",l:"Arashiyama Bambuswald"},{k:"kiyomizu",l:"Kiyomizu-dera"},{k:"kinkaku",l:"Goldener Pavillon"},
+    {k:"castle",l:"Japanische Burg"},{k:"meiji",l:"Meiji-Schrein"},{k:"yukata",l:"Kimono / Yukata tragen"},
+    {k:"ryokan",l:"Nacht im Ryokan"},
+  ]},
+  {key:"food", t:"🍜 Essen & Trinken", items:[
+    {k:"sushi",l:"Sushi am Fischmarkt"},{k:"ramen",l:"Ramen-Tour"},{k:"wagyu",l:"Wagyu / Kobe-Beef"},
+    {k:"street",l:"Street Food in Osaka"},{k:"izakaya",l:"Izakaya-Abend"},{k:"conbini",l:"Conbini-Gourmet"},
+    {k:"kaiten",l:"Förderband-Sushi"},{k:"sake",l:"Sake / Strong Zero"},{k:"cafe",l:"Themen-Café"},
+  ]},
+  {key:"natur", t:"🏞️ Natur & Tagesausflüge", items:[
+    {k:"fuji",l:"Mt. Fuji sehen"},{k:"kawaguchi",l:"Lake Kawaguchiko"},{k:"onsen",l:"Onsen-Bad"},
+    {k:"beach",l:"Strand & Pazifik (Izu)"},{k:"kamakura",l:"Kamakura"},{k:"hakone",l:"Hakone"},
+    {k:"nikko",l:"Nikko"},{k:"fujiclimb",l:"Fuji besteigen"},
+  ]},
+  {key:"fun", t:"🎮 Nerd, Fun & Action", items:[
+    {k:"usj",l:"Universal Studios / Nintendo World"},{k:"teamlab",l:"teamLab"},{k:"gokart",l:"Mario-Kart Stadt"},
+    {k:"arcade",l:"Spielhallen / Arcades"},{k:"baseball",l:"Baseball-Spiel live"},{k:"ninten",l:"Nintendo Museum"},
+    {k:"sumo",l:"Sumo erleben"},{k:"vr",l:"VR / Action-Park"},
+  ]},
+  {key:"night", t:"🌃 Nightlife", items:[
+    {k:"karaoke",l:"Karaoke"},{k:"barhop",l:"Bar-Hopping"},{k:"club",l:"Club / Techno"},
+    {k:"goldengai",l:"Golden Gai"},{k:"robot",l:"Themen- / Robot-Bars"},{k:"pachinko",l:"Pachinko"},
+  ]},
+];
+const W_LABEL = ["egal","nice","will ich","UNBEDINGT 🔥"];
+const ALL_ITEMS = GROUPS.flatMap(g=>g.items.map(it=>({...it,group:g.t})));
+const ITEM_LBL = Object.fromEntries(ALL_ITEMS.map(it=>[it.k,it.l]));
+
+/* --- Decode --- */
+function decode(code){
+  try{
+    const b = code.trim().replace(/^JP26-/,"");
+    return JSON.parse(decodeURIComponent(escape(atob(b))));
+  }catch(e){ return {__err:String(e), __raw:code}; }
+}
+const SUBS = RAW_CODES.map(decode).filter(s=>!s.__err);
+const ERRS = RAW_CODES.map(decode).filter(s=>s.__err);
+
+/* --- Render --- */
+const $ = (h)=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstElementChild;};
+const esc = (s)=>String(s==null?"":s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const N = SUBS.length;
+
+ROOT.querySelector('#meta').textContent =
+  N===0 ? "noch keine Codes eingetragen" : `${N} von ${CREW.length} Antworten`;
+
+// Crew chips
+const answered = new Set(SUBS.map(s=>(s.name||"").trim().toLowerCase()));
+ROOT.querySelector('#crew').innerHTML = CREW.map(n=>{
+  const got = answered.has(n.toLowerCase());
+  return `<span class="chip ${got?'':'miss'}">${got?'✅':'⏳'} ${esc(n)}</span>`;
+}).join('') + (SUBS.filter(s=>!CREW.some(c=>c.toLowerCase()===(s.name||'').trim().toLowerCase()))
+  .map(s=>`<span class="chip">✅ ${esc(s.name||'?')}</span>`).join(''));
+
+const content = ROOT.querySelector('#content');
+
+if(N===0){
+  content.innerHTML = `<section><div class="empty">Sobald der erste <code>JP26-</code>-Code eingetragen ist, erscheint hier die komplette Auswertung:<br>Vibe-Profil · Must-See-Ranking · Entweder/Oder · Konsens & Streit · Ideen & Must-Dos.</div></section>`;
+}else{
+  content.appendChild(renderVibes());
+  content.appendChild(renderRanking());
+  content.appendChild(renderChoices());
+  content.appendChild(renderKonsens());
+  content.appendChild(renderText());
+}
+
+function avg(arr){return arr.length? arr.reduce((a,b)=>a+b,0)/arr.length : 0;}
+
+function renderVibes(){
+  const sec=$(`<section><h2>🎚️ Vibe-Profil <span class="tag">Ø Begeisterung 0–10</span></h2></section>`);
+  const rows = VIBES.map(v=>{
+    const vals = SUBS.map(s=>s.s&&s.s[v.k]).filter(x=>x!=null&&x!=="");
+    return {v, a:avg(vals.map(Number)), n:vals.length};
+  }).sort((x,y)=>y.a-x.a);
+  rows.forEach(r=>{
+    sec.appendChild($(`<div class="row">
+      <div class="lbl" style="flex:0 0 200px"><div class="name">${esc(r.v.l)}</div></div>
+      <div class="bar"><i style="width:${r.a*10}%"></i></div>
+      <div class="val">${r.a.toFixed(1)} <span style="opacity:.6">/10</span></div>
+    </div>`));
+  });
+  return sec;
+}
+
+function renderRanking(){
+  const sec=$(`<section><h2>🏆 Must-See-Ranking <span class="tag">Ø Wunsch 0–3 · 🔥 = „UNBEDINGT"</span></h2></section>`);
+  const ranked = ALL_ITEMS.map(it=>{
+    const vals = SUBS.map(s=>s.w&&s.w[it.k]).filter(x=>x!=null).map(Number);
+    return {it, a:avg(vals), fire:vals.filter(x=>x===3).length, n:vals.length, sum:vals.reduce((a,b)=>a+b,0)};
+  }).filter(r=>r.n>0).sort((x,y)=> y.a-x.a || y.fire-x.fire);
+  ranked.forEach((r,i)=>{
+    const pct = (r.a/3)*100;
+    sec.appendChild($(`<div class="rank ${i===0?'top1':''}">
+      <div class="pos">${i+1}</div>
+      <div class="lbl"><div class="name">${esc(r.it.l)}</div><div class="sub">${esc(r.it.group)}</div></div>
+      <div class="bar" style="flex:0 0 120px;max-width:120px"><i style="width:${pct}%"></i></div>
+      <div class="meta"><b>${r.a.toFixed(2)}</b>/3 ${r.fire?`· <span class="fire">${r.fire}× 🔥</span>`:''}</div>
+    </div>`));
+  });
+  return sec;
+}
+
+function renderChoices(){
+  const sec=$(`<section><h2>⚖️ Entweder / Oder</h2><div class="grid2" id="choicegrid"></div></section>`);
+  const grid=sec.querySelector('#choicegrid');
+  CHOICES.forEach(c=>{
+    const a=SUBS.filter(s=>s.c&&s.c[c.k]==='a').length;
+    const b=SUBS.filter(s=>s.c&&s.c[c.k]==='b').length;
+    grid.appendChild($(`<div class="vs" style="flex-direction:column;gap:6px">
+      <div style="font-size:12.5px;color:var(--mut)">${esc(c.q)}</div>
+      <div style="display:flex;gap:6px">
+        <div class="opt ${a>=b?'win':''}"><div class="ic">${c.a.ic}</div><div class="t">${esc(c.a.t)}</div><div class="n">${a}</div></div>
+        <div class="opt ${b>a?'win':''}"><div class="ic">${c.b.ic}</div><div class="t">${esc(c.b.t)}</div><div class="n">${b}</div></div>
+      </div>
+    </div>`));
+  });
+  return sec;
+}
+
+function renderKonsens(){
+  const sec=$(`<section><h2>🤝 Konsens & 💥 Streitthemen</h2><div class="grid2"></div></section>`);
+  const grid=sec.querySelector('.grid2');
+  const stats = ALL_ITEMS.map(it=>{
+    const vals = SUBS.map(s=>s.w&&s.w[it.k]).filter(x=>x!=null).map(Number);
+    if(vals.length<Math.max(2,Math.ceil(N*0.6))) return null;
+    const m=avg(vals);
+    const variance=avg(vals.map(v=>(v-m)**2));
+    return {it,m,variance,min:Math.min(...vals),max:Math.max(...vals)};
+  }).filter(Boolean);
+  const consensus = stats.filter(s=>s.m>=2 && s.variance<=0.35).sort((a,b)=>b.m-a.m).slice(0,8);
+  const strife = stats.filter(s=>s.variance>=0.9).sort((a,b)=>b.variance-a.variance).slice(0,8);
+  const colA=$(`<div><div style="font-size:13px;color:var(--good);margin-bottom:8px;font-weight:600">✅ Alle wollen (Selbstläufer)</div></div>`);
+  consensus.forEach(s=>colA.appendChild($(`<div class="item"><span class="dot" style="background:var(--good)"></span>${esc(s.it.l)} <span style="color:var(--mut);margin-left:auto;font-size:12px">Ø${s.m.toFixed(1)}</span></div>`)));
+  if(!consensus.length)colA.appendChild($(`<div class="empty" style="padding:8px">– noch keiner –</div>`));
+  const colB=$(`<div><div style="font-size:13px;color:var(--warn);margin-bottom:8px;font-weight:600">💥 Geteilte Meinungen</div></div>`);
+  strife.forEach(s=>colB.appendChild($(`<div class="item"><span class="dot" style="background:var(--warn)"></span>${esc(s.it.l)} <span style="color:var(--mut);margin-left:auto;font-size:12px">${s.min}–${s.max}</span></div>`)));
+  if(!strife.length)colB.appendChild($(`<div class="empty" style="padding:8px">– noch keiner –</div>`));
+  grid.appendChild(colA);grid.appendChild(colB);
+  return sec;
+}
+
+function renderText(){
+  const sec=$(`<section><h2>💬 Eigene Ideen, Must-Dos & No-Gos</h2></section>`);
+  SUBS.forEach(s=>{
+    const p=$(`<div class="person"><div class="pn">${esc(s.name||'Unbekannt')}</div></div>`);
+    if(s.t1) p.appendChild($(`<div class="qa"><b>🎯 #1 Must-Do:</b> ${esc(s.t1)}</div>`));
+    if(s.t2) p.appendChild($(`<div class="qa"><b>🚫 No-Go:</b> ${esc(s.t2)}</div>`));
+    if(s.t3) p.appendChild($(`<div class="qa"><b>✨ Wunsch:</b> ${esc(s.t3)}</div>`));
+    const ideas = s.ideas&&Object.values(s.ideas).filter(x=>x&&x.trim());
+    if(ideas&&ideas.length) p.appendChild($(`<div class="qa"><b>💡 Ideen:</b> ${ideas.map(esc).join(' · ')}</div>`));
+    if(p.children.length===1) p.appendChild($(`<div class="qa" style="color:var(--mut)">– keine Freitext-Angaben –</div>`));
+    sec.appendChild(p);
+  });
+  return sec;
+}
+
+// raw dump for backup
+ROOT.querySelector('#rawdump').textContent = RAW_CODES.join('\n') || '(noch leer)';
+if(ERRS.length) ROOT.querySelector('#meta').textContent += ` ⚠️ ${ERRS.length} Code(s) fehlerhaft`;
+
+}
+
+/* ===== Router ===== */
+(function(){
+  var views=['home','uebersicht','tagesplan','ergebnisse'];
+  var inited={};
+  function cur(){ return (location.hash.replace(/^#\/?/,'')||'home'); }
+  function show(name){
+    if(views.indexOf(name)<0) name='home';
+    document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+    var el=document.getElementById('v-'+name); if(el) el.classList.add('active');
+    document.querySelectorAll('.appnav nav a[data-view]').forEach(function(a){
+      a.classList.toggle('on', a.dataset.view===name); });
+    if(!inited[name]){ inited[name]=true; try{ window['initView_'+name](); }catch(e){ console.error('init '+name, e); } }
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange', function(){ show(cur()); });
+  show(cur());
+})();
+</script>
+</body>
+</html>
