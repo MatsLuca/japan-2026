@@ -266,6 +266,11 @@ h2.sec{font-family:var(--serif);font-weight:800;font-size:clamp(28px,4.4vw,46px)
 /* ---------- FOOTER ---------- */
 footer{position:relative;z-index:2;text-align:center;padding:60px 20px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
 footer .seal{font-family:var(--serif);color:var(--vermilion);font-size:26px;display:block;margin-bottom:14px}
+
+/* ---------- Mobile-Overrides (ganz am Ende → gewinnt per Quell-Reihenfolge) ---------- */
+@media(max-width:760px){
+  .ring,.btotal{position:static !important}
+}
 </style>
 </head>
 <body>
