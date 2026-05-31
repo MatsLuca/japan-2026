@@ -623,7 +623,13 @@ document.getElementById('crewGrid').innerHTML = C.crew.map(m=>`
       <p class="rdesc">${esc(s.note)}</p>
       <div class="chips">${(s.tags||[]).map(t=>`<span class="chip">${esc(t)}</span>`).join('')}</div>
     </div></div>`;
-  }).join('');
+  }).join('') + `<div class="rstep" data-ov="1"><div class="rcard ov">
+      <div class="rtop"><span class="rn">✦</span><div class="rttl">
+        <div class="rname">Die ganze Reise<span class="rjp">全体図</span></div>
+        <div class="rmeta">28 Tage · 8 Stationen · Tokyo ⇄ Kansai</div></div></div>
+      <p class="rdesc">Von Tokyo über Fuji & die Izu-Küste bis nach Kansai — und zurück ins Obon-Finale. Die komplette Schleife auf einen Blick.</p>
+      <div class="chips"><span class="chip">🚐 Roadtrip</span><span class="chip">🚅 Shinkansen</span><span class="chip">⛩️ Kansai</span><span class="chip">🎆 Obon</span></div>
+    </div></div>`;
 
   let map=null, doneLine=null, marks=[], cur=-1;
   function initMap(){
@@ -649,10 +655,18 @@ document.getElementById('crewGrid').innerHTML = C.crew.map(m=>`
     doneLine.setLatLngs(STOPS.slice(0,i+1).map(s=>[s.lat,s.lng]));
     map.flyTo([STOPS[i].lat,STOPS[i].lng], STOPS[i].z||9, {duration:1.2});
   }
+  function showAll(){
+    if(!map||cur===-2) return; cur=-2;
+    marks.forEach(m=>{const el=m.getElement&&m.getElement(); if(!el)return; const p=el.querySelector('.pin');
+      if(p){p.classList.add('on'); p.classList.remove('cur');}});
+    doneLine.setLatLngs(STOPS.map(s=>[s.lat,s.lng]));
+    map.flyToBounds(L.latLngBounds(STOPS.map(s=>[s.lat,s.lng])),{padding:[40,40],duration:1.4});
+  }
   initMap();
   const so=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){
     document.querySelectorAll('.rstep').forEach(x=>x.classList.remove('act'));
-    e.target.classList.add('act'); goTo(+e.target.dataset.i);}}),
+    e.target.classList.add('act');
+    if(e.target.dataset.ov) showAll(); else goTo(+e.target.dataset.i);}}),
     {rootMargin:'-50% 0px -50% 0px',threshold:0});
   document.querySelectorAll('.rstep').forEach(s=>so.observe(s));
 })();
